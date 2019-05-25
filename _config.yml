@@ -1,7 +1,7 @@
 # Site settings
 title: AA's Blog
 SEOTitle: 李AA的博客 | AA's Blog
-header-img: img/home-bg.jpg
+header-img: img/eT3swTx.jpg
 email: lycindie4@gmail.com
 description: "关于游戏音频程序与设计、音频软件开发 | 李AA，Game Audio Programmer & Software Developer"
 keyword: "李AA, Game Audio, Audio Software, Wwise, Unreal, Fmod, Unity, Super Collider, Max/Msp, Reaper"
@@ -13,10 +13,10 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username:     huxpro
+#weibo_username:     huxpro
 zhihu_username:     李昱宸
 github_username:    jazzlost
-twitter_username:   huxpro
+#twitter_username:   huxpro
 #facebook_username:  huxpro
 #linkedin_username:  firstname-lastname-idxxxx
 
@@ -79,7 +79,7 @@ ga_domain: huangxuan.me
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Null"
-sidebar-avatar: /img/avatar-hux-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/maxresdefault_live.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
