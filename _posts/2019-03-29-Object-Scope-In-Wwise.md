@@ -17,24 +17,24 @@ tags:
 
 
 # Game Object
-* <font size =4> Q: 什么是Game Object？</font>
+* <html><font size =4> Q: 什么是Game Object？</font></html>
 * A: Game Object没有固定的定义，在每款引擎甚至中间件内都有区别。不过总体意思相差不多，可以理解为对象，也就是需要实例化使用的具体类。
 * Unity中GameObject被简单抽象为需要放入场景实例化的“东西”。
 * UE4则具体化为AActor类及其子类，AActor类也是唯一能够在UWorld类中被Spawned的类型。所以简单来说所有可以被放到level map中的都属于Actor类(大多数情况下都不单是Actor类)。
 * 这里有个容易混淆的地方，UE4拥有一个叫做UObject的类。这是一个比较底层的类别，也是AActor的基类。它拥有反射和序列化的一些属性，没有渲染和运动等组件。
 <br> </br>
-* <font size =4>Q: Game Object在声音引擎中什么作用？</font>
+* <html><font size =4>Q: Game Object在声音引擎中什么作用？</font></html>
 * A: 对于游戏中每个发声体(Emitter),都需要注册给Wwise。最终每个声音事件的播放参数，在声音引擎中结算时都需要Emitter的各种数据,这里的Emitter就是Game Object。还有一类用来收听声源的收听体(Listener), 他们收集Emitter播放的声音以进行3D结算时需要的数据也得从注册的Game Object上获取。
 
 # Game Object在Wwise中的集成
-* <font size =4>Q: AkGameObjectID是什么?</font>
+* <html><font size =4>Q: AkGameObjectID是什么?</font></html>
 * A: 游戏引擎传给声音引擎表示game object的唯一标识符，无符号64位整型。
 ```cpp
 //AkTypes.h中有定义
 typedef unsigned __int64	AkUInt64;
 ```
 
-* <font size =4>Q: 怎么注册game object?</font>
+* <html><font size =4>Q: 怎么注册game object?</font></html>
  ```cpp 
   //ID为uint64_t
   const AKGameObjectID car = 1;
@@ -51,7 +51,7 @@ typedef unsigned __int64	AkUInt64;
   (...)
 ```
 
-* <font size =4>Q: 怎么注销game object?</font>
+* <html><font size =4>Q: 怎么注销game object?</font></html>
 ```cpp
   AK::SoundEngine::UnregisterGameObj(car);
   AK::SOundEngine::UnregisterGameObj(character);
@@ -59,7 +59,7 @@ typedef unsigned __int64	AkUInt64;
   AK::SoundEngine::UnregisterAllGameObj();
   ```
 
-* <font size =4>Q：Unreal中怎么实现的？</font>
+* <html><font size =4>Q：Unreal中怎么实现的？</font></html>
 ```cpp
 #include <AkAudioDevice.h>
 //注册
@@ -128,7 +128,7 @@ void FAkAudioDevice::UnregisterComponent(...)
 }
 ```
 
-* <font size =4>Q: 组件(AkComponent)怎么作为game object注册</font>
+* <html><font size =4>Q: 组件(AkComponent)怎么作为game object注册</font></html>
 ```cpp
 #include <AkAudioDevice.h>
 //注册
@@ -192,7 +192,7 @@ void FAkAudioDevice::UnregisterComponent( UAkComponent * in_pComponent )
 }
 ```
 
-* <font size =4>Q: 怎么通过组件(AkComponent)找到对应game object ID？</font>
+* <html><font size =4>Q: 怎么通过组件(AkComponent)找到对应game object ID？</font></html>
 ```cpp
 #include<AkComponent.h>
 //调用这个类型转换
@@ -204,8 +204,8 @@ AkGameObjectID UAkComponent::GetAkGameObjectID() const
 
 
 # 依赖Game Object数据的一些接口
-* <font size =4>Q: 哪些声音数据结算依赖于game object？</font>
-1. <font size =4>Audio Object相关联的所有偏置量(offset)</font>
+* <html><font size =4>Q: 哪些声音数据结算依赖于game object？</font></html>
+1. <html><font size =4>Audio Object相关联的所有偏置量(offset)</font></html>
 ```cpp
 AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 {
@@ -220,7 +220,7 @@ AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 }
 ```
 
-2. <font size =4>发声点位置和朝向</font>
+2. <html><font size =4>发声点位置和朝向</font></html>
 ```cpp
 //和Event相关的接口
 auto gameObjID = in_pComponent->GetAkGameObjectID();
@@ -285,7 +285,7 @@ void FAkAudioDevice::RegisterComponent(...)
 	...
 }
 ```
-3.<font size =4> Game Sync类数据(State, Switch,RTPC)</font>
+3.<html><font size =4> Game Sync类数据(State, Switch,RTPC)</font></html>
 ```cpp
 AKRESULT FAkAudioDevice::SetSwitch(...)
 {
@@ -325,7 +325,7 @@ AKRESULT FAkAudioDevice::SetRTPCValue(...)
 	...
 }
 ```
-4. <font size =4>空间类DSP效果器所需数据</font>
+4. <html><font size =4>空间类DSP效果器所需数据</font></html>
 ```cpp
 AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
 {
@@ -354,7 +354,7 @@ void FAkAudioDevice::RegisterSpatialAudioEmitter()
 	...
 }
 ```
-5.<font size =4> 声笼(Obstruction)和声障(Occlusion)计算所需数据</font>
+5.<html><font size =4> 声笼(Obstruction)和声障(Occlusion)计算所需数据</font></html>
 ```cpp
 void UAkComponent::UpdateOcclusionObstruction()
 { ObstructionService.UpdateObstructionOcclusion(Listeners, GetPosition(), GetOwner(), GetSpatialAudioRoom(), OcclusionCollisionChannel, OcclusionRefreshInterval); 
