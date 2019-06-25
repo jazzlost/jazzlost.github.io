@@ -1,3 +1,21 @@
+---
+layout:     post
+title:      "Wwise Game Object"
+subtitle:   " \"Hello World, Hello Blog\""
+date:       2019-03-29 12:00:00
+author:     "AA"
+header-img: "img/post-bg-2015.jpg"
+catalog: true
+tags:
+    - Wwise
+    - Unreal
+---
+
+
+
+
+
+
 # Game Object
 * <font size =4> Q: 什么是Game Object？</font>
 * A: Game Object没有固定的定义，在每款引擎甚至中间件内都有区别。不过总体意思相差不多，可以理解为对象，也就是需要实例化使用的具体类。
