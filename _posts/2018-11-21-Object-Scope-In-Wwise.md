@@ -1,41 +1,32 @@
 ---
-layout:     post
-title:      "Wwise Game Object"
-subtitle:   " \"Hello World, Hello Blog\""
-date:       2019-03-29 12:00:00
-author:     "AA"
-header-img: "img/post-bg-2015.jpg"
-catalog: true
-tags:
-    - Wwise
-    - Unreal
+layout: post
+title: "Wwise中的GameObject集成与使用"
+subtitle:
+author: "李AA"
+header-style: text
+tags: "Wwise"
 ---
 
-
-
-
-
-
 # Game Object
-* <html><font size =4> Q: 什么是Game Object？</font></html>
+* #### Q: 什么是Game Object?
 * A: Game Object没有固定的定义，在每款引擎甚至中间件内都有区别。不过总体意思相差不多，可以理解为对象，也就是需要实例化使用的具体类。
 * Unity中GameObject被简单抽象为需要放入场景实例化的“东西”。
 * UE4则具体化为AActor类及其子类，AActor类也是唯一能够在UWorld类中被Spawned的类型。所以简单来说所有可以被放到level map中的都属于Actor类(大多数情况下都不单是Actor类)。
 * 这里有个容易混淆的地方，UE4拥有一个叫做UObject的类。这是一个比较底层的类别，也是AActor的基类。它拥有反射和序列化的一些属性，没有渲染和运动等组件。
-<br> </br>
-* <html><font size =4>Q: Game Object在声音引擎中什么作用？</font></html>
+
+* #### Q: Game Object在声音引擎中什么作用？
 * A: 对于游戏中每个发声体(Emitter),都需要注册给Wwise。最终每个声音事件的播放参数，在声音引擎中结算时都需要Emitter的各种数据,这里的Emitter就是Game Object。还有一类用来收听声源的收听体(Listener), 他们收集Emitter播放的声音以进行3D结算时需要的数据也得从注册的Game Object上获取。
 
 # Game Object在Wwise中的集成
-* <html><font size =4>Q: AkGameObjectID是什么?</font></html>
+* #### Q: AkGameObjectID是什么?
 * A: 游戏引擎传给声音引擎表示game object的唯一标识符，无符号64位整型。
 ```cpp
 //AkTypes.h中有定义
 typedef unsigned __int64	AkUInt64;
 ```
 
-* <html><font size =4>Q: 怎么注册game object?</font></html>
- ```cpp 
+* #### Q: 怎么注册game object?
+```cpp 
   //ID为uint64_t
   const AKGameObjectID car = 1;
   const AKGameObjectID character = 2;
@@ -51,84 +42,81 @@ typedef unsigned __int64	AkUInt64;
   (...)
 ```
 
-* <html><font size =4>Q: 怎么注销game object?</font></html>
+* #### Q: 怎么注销game object?
 ```cpp
   AK::SoundEngine::UnregisterGameObj(car);
   AK::SOundEngine::UnregisterGameObj(character);
   //游戏结束注销所有对象
   AK::SoundEngine::UnregisterAllGameObj();
-  ```
-
-* <html><font size =4>Q：Unreal中怎么实现的？</font></html>
-```cpp
-#include <AkAudioDevice.h>
-//注册
-namespace FAkAudioDevice_Helpers
-{
-	void RegisterGameObject(AkGameObjectID in_gameObjId, const FString& Name)
-	{
-    //Release版本中不需要监视对象名称，所以改为ID注册对象方式
-#ifdef AK_OPTIMIZED
-		AK::SoundEngine::RegisterGameObj(in_gameObjId);
-#else
-		if (Name.Len() > 0)
-		{
-			AK::SoundEngine::RegisterGameObj(in_gameObjId, TCHAR_TO_ANSI(*Name));
-		}
-		else
-		{
-			AK::SoundEngine::RegisterGameObj(in_gameObjId);
-		}
-#endif
-	}
-}
-
-
-//停用
-void FAkAudioDevice::StopGameObject( UAkComponent * in_pComponent )
-{
-	AkGameObjectID gameObjId = DUMMY_GAMEOBJ;
-	if ( in_pComponent )
-	{
-		gameObjId = in_pComponent->GetAkGameObjectID();
-	}
-	if ( m_bSoundEngineInitialized )
-	{
-		AK::SoundEngine::StopAll( gameObjId );
-	}
-}
-
-
-//注销函数没有上层包装，直接调用了API接口，几个地方引用到
-//AkAudioDevice卸载函数
-void FAkAudioDevice::Teardown()
-{
-  ...
-  
-  //#define DUMMY_GAMEOBJ ((AkGameObjectID)0x2)
-  AK::SoundEngine::UnregisterGameObj( DUMMY_GAMEOBJ );
-  
-  ...
-}
-
-//即播即销毁的声音对象
-AkPlayingID FAkAudioDevice::PostEventAtLocation(...)
-{
-  ...
-
-  AK::SoundEngine::UnregisterGameObj( objId );
-
-  ...
-}
-
-//组件的注销
-void FAkAudioDevice::UnregisterComponent(...)
-{  
-  //见后文
-}
 ```
 
-* <html><font size =4>Q: 组件(AkComponent)怎么作为game object注册</font></html>
+* #### Q：Unreal中怎么实现的?
+```cpp
+  #include <AkAudioDevice.h>
+  //注册
+  namespace FAkAudioDevice_Helpers
+  {
+  	void RegisterGameObject(AkGameObjectID in_gameObjId, const FString& Name)
+  	{
+      //Release版本中不需要监视对象名称，所以改为ID注册对象方式
+#ifdef AK_OPTIMIZED
+  		AK::SoundEngine::RegisterGameObj(in_gameObjId);
+#else
+  		if (Name.Len() > 0)
+  		{
+  			AK::SoundEngine::RegisterGameObj(in_gameObjId, TCHAR_TO_ANSI(*Name));
+  		}
+  		else
+  		{
+  			AK::SoundEngine::RegisterGameObj(in_gameObjId);
+  		}
+#endif
+  	}
+  }
+  
+  //停用
+  void FAkAudioDevice::StopGameObject( UAkComponent * in_pComponent )
+  {
+  	AkGameObjectID gameObjId = DUMMY_GAMEOBJ;
+  	if ( in_pComponent )
+  	{
+  		gameObjId = in_pComponent->GetAkGameObjectID();
+  	}
+  	if ( m_bSoundEngineInitialized )
+  	{
+  		AK::SoundEngine::StopAll( gameObjId );
+  	}
+  }
+  
+  //注销函数没有上层包装，直接调用了API接口
+  void FAkAudioDevice::Teardown()
+  {
+    ...
+    
+    //#define DUMMY_GAMEOBJ ((AkGameObjectID)0x2)
+    AK::SoundEngine::UnregisterGameObj( DUMMY_GAMEOBJ );
+    
+    ...
+  }
+  
+  //即播即销毁的声音对象
+  AkPlayingID FAkAudioDevice::PostEventAtLocation(...)
+  {
+    ...
+  
+    AK::SoundEngine::UnregisterGameObj( objId );
+  
+    ...
+  }
+  
+  //组件的注销
+  void FAkAudioDevice::UnregisterComponent(...)
+  {  
+    //见后文
+  }
+```
+
+* #### Q: 组件(AkComponent)怎么作为game object注册
 ```cpp
 #include <AkAudioDevice.h>
 //注册
@@ -192,7 +180,7 @@ void FAkAudioDevice::UnregisterComponent( UAkComponent * in_pComponent )
 }
 ```
 
-* <html><font size =4>Q: 怎么通过组件(AkComponent)找到对应game object ID？</font></html>
+* #### Q: 怎么通过组件(AkComponent)找到对应game object ID？
 ```cpp
 #include<AkComponent.h>
 //调用这个类型转换
@@ -204,8 +192,8 @@ AkGameObjectID UAkComponent::GetAkGameObjectID() const
 
 
 # 依赖Game Object数据的一些接口
-* <html><font size =4>Q: 哪些声音数据结算依赖于game object？</font></html>
-1. <html><font size =4>Audio Object相关联的所有偏置量(offset)</font></html>
+* #### Q: 哪些声音数据结算依赖于game object？
+1. #### Audio Object相关联的所有偏置量(offset)
 ```cpp
 AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 {
@@ -220,7 +208,7 @@ AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 }
 ```
 
-2. <html><font size =4>发声点位置和朝向</font></html>
+2. #### 发声点位置和朝向
 ```cpp
 //和Event相关的接口
 auto gameObjID = in_pComponent->GetAkGameObjectID();
@@ -285,7 +273,7 @@ void FAkAudioDevice::RegisterComponent(...)
 	...
 }
 ```
-3.<html><font size =4> Game Sync类数据(State, Switch,RTPC)</font></html>
+3.####  Game Sync类数据(State, Switch,RTPC)
 ```cpp
 AKRESULT FAkAudioDevice::SetSwitch(...)
 {
@@ -325,7 +313,7 @@ AKRESULT FAkAudioDevice::SetRTPCValue(...)
 	...
 }
 ```
-4. <html><font size =4>空间类DSP效果器所需数据</font></html>
+4. #### 空间类DSP效果器所需数据
 ```cpp
 AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
 {
@@ -354,7 +342,7 @@ void FAkAudioDevice::RegisterSpatialAudioEmitter()
 	...
 }
 ```
-5.<html><font size =4> 声笼(Obstruction)和声障(Occlusion)计算所需数据</font></html>
+5.####  声笼(Obstruction)和声障(Occlusion)计算所需数据
 ```cpp
 void UAkComponent::UpdateOcclusionObstruction()
 { ObstructionService.UpdateObstructionOcclusion(Listeners, GetPosition(), GetOwner(), GetSpatialAudioRoom(), OcclusionCollisionChannel, OcclusionRefreshInterval); 
