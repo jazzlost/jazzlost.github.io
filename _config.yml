@@ -1,6 +1,6 @@
 # Site settings
-title: AA's Blog
-SEOTitle: 李AA的博客 | AA's Blog
+title: AA Audio
+SEOTitle: 李AA的博客 | AAAudio
 header-img: img/blog-theme.jpg
 email: lycindie4@gmail.com
 description: "关于游戏音频程序与设计、音频软件开发 | 李AA，Game Audio Programmer & Software Developer"
@@ -13,12 +13,12 @@ future: true
 
 # SNS settings
 RSS: false
-#weibo_username:     huxpro
-zhihu_username:     li-yu-chen
-github_username:    jazzlost
+weibo_username: Ocean_Walker
+zhihu_username: li-yu-chen
+github_username: jazzlost
 #twitter_username:   huxpro
 #facebook_username:  huxpro
-#linkedin_username:  firstname-lastname-idxxxx
+linkedin_username: yuchen-li-067767b4
 
 
 
@@ -59,26 +59,26 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: hux
+# disqus_username: hux
 
 # Netease settings
-netease_comment: false
+# netease_comment: false
 
 
 
 # Analytics settings
 # Baidu Analytics 
-# ba_track_id: [your track id]
+ba_track_id: 70d8b26bd078281c37c49a53086aba30
 
 # Google Analytics
-ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: huangxuan.me
+ga_track_id: 'UA-144698485-1'            # Format: UA-xxxxxx-xx
+ga_domain: auto
 
 
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "Null"
+sidebar-about-description: "游戏音频程序，音频设计与开发 | 李AA，Game Audio Programmer & Audio Software Developer & Audio Designer"
 sidebar-avatar: /img/blog-head.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -101,7 +101,7 @@ page-mathjax: false
 
 
 # Friends
-friends: [
+# friends: [
     #{
     #     title: "Su",
     #     href: "http://su.gallery/"
@@ -112,4 +112,4 @@ friends: [
         #title: "前端外刊评论",
         #href: "http://qianduan.guru/"
     #}
-]
+# ]
