@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Wwise中的GameObject集成与使用"
-subtitle:
+subtitle: "Learn About Game Object In Wwise"
 author: "李AA"
 header-img: "img/post-bg-music-header_745px.jpg"
 tags:
