@@ -1,7 +1,7 @@
 # Site settings
 title: AA Audio
-SEOTitle: 李AA的博客 | AAAudio
-header-img: img/blog-theme.jpg
+SEOTitle: 李AA的博客 | AA Audio
+header-img: img/blog-head-03.jpg
 email: lycindie4@gmail.com
 description: "关于游戏音频程序与设计、音频软件开发 | 李AA，Game Audio Programmer & Software Developer"
 keyword: "李AA, Game Audio, Audio Software, Wwise, Unreal, Fmod, Unity, Super Collider, Max/Msp, Reaper"
@@ -19,6 +19,7 @@ github_username: jazzlost
 #twitter_username:   huxpro
 #facebook_username:  huxpro
 linkedin_username: yuchen-li-067767b4
+douban_username: leeaa4444
 
 
 
