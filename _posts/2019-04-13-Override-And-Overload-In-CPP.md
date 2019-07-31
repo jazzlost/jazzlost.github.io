@@ -27,66 +27,60 @@ tags:
 * 可以看下具体例子：
 
 ```cpp
-    #include <iostream>
-    class Overloader
-    {
-    public:
-       //原函数
-       void overloadMe(){std::cout << "overloadMe" << std::endl;}
+#include <iostream>
+class Overloader
+{
+public:
+   //原函数
+   void overloadMe(){std::cout << "overloadMe" << std::endl;}
+   //重载带一个参数
+   void overloadMe(uint8_t i){std::cout << "overloadMe with argument" << i << std::endl;}
+   //重载带两个参数
+   void overloadMe(uint8_t i, cont char* ch){std::cout << "overloadMe with two arguments " << i << " and " << ch <<    std::endl;}
 
-       //重载带一个参数
-       void overloadMe(uint8_t i){std::cout << "overloadMe with argument" << i << std::endl;}
+   //无参数带不同返回类型的重载
+   //编译报错，有相同参数列表的函数声明
+   const char* overloadMe(){return "overloadMe with return value";}
 
-       //重载带两个参数
-       void overloadMe(uint8_t i, cont char* ch){std::cout << "overloadMe with two arguments " << i << " and " << ch <<     std::endl;}
-    
-       //无参数带不同返回类型的重载
-       //编译报错，有相同参数列表的函数声明
-       const char* overloadMe(){return "overloadMe with return value";}
-    
-       //一个参数带不同返回类型的重载
-       //编译报错，有相同参数列表的函数声明
-       const char* overloadMe(uint8_t i){std::cout << "overloadMe with argument" << i << std::endl; 
-       return "overloadMe with return value";}
-    
-       //两个与之前不同类型参数带不同返回类型重载
-       const char* overloadMe(uint8_t i, uint16_t j)
-       {std::cout << "overloadMe with two arguments " << i << " and " << j << std::endl; 
-       return "overloadMe with return value";}
-    };
+   //一个参数带不同返回类型的重载
+   //编译报错，有相同参数列表的函数声明
+   const char* overloadMe(uint8_t i){std::cout << "overloadMe with argument" << i << std::endl; 
+   return "overloadMe with return value";}
 
-    int main()
-    {
-        const char* c_arg = "I'm test overloader argument";
-        uint8_t n_arg01 = 1;
-        uint16_t n_arg02 = 2;
-
-        Overloader overloader;
-
-        overloader.overloadMe();
-        std::cout << "-------------------------------------------------------" << std::endl;
-        overloader.overloadMe(n_arg01);
-        std::cout << "-------------------------------------------------------" << std::endl;
-        overloader.overloadMe(n_arg01, c_arg);
-        std::cout << "-------------------------------------------------------" << std::endl;
-        const char* c_temp = overloader.overloadMe(n_arg01, n_arg02);
-        std::cout << c_temp << std::endl;
-
-        return 0;
-    }
+   //两个与之前不同类型参数带不同返回类型重载
+   const char* overloadMe(uint8_t i, uint16_t j)
+   {std::cout << "overloadMe with two arguments " << i << " and " << j << std::endl; 
+   return "overloadMe with return value";}
+};
+int main()
+{
+    const char* c_arg = "I'm test overloader argument";
+    uint8_t n_arg01 = 1;
+    uint16_t n_arg02 = 2;
+    Overloader overloader;
+    overloader.overloadMe();
+    std::cout << "-------------------------------------------------------" << std::endl;
+    overloader.overloadMe(n_arg01);
+    std::cout << "-------------------------------------------------------" << std::endl;
+    overloader.overloadMe(n_arg01, c_arg);
+    std::cout << "-------------------------------------------------------" << std::endl;
+    const char* c_temp = overloader.overloadMe(n_arg01, n_arg02);
+    std::cout << c_temp << std::endl;
+    return 0;
+}
 ```
 
 * 下面是结果
 
 ```cpp
-    overloadMe
-    -------------------------------------------------------
-    overloadMe with argument 1
-    -------------------------------------------------------
-    overloadMe with two arguments 1 and I'm test overloader argument
-    -------------------------------------------------------
-    overloadMe with two arguments 1 and 2
-    overloadMe with return value
+overloadMe
+-------------------------------------------------------
+overloadMe with argument 1
+-------------------------------------------------------
+overloadMe with two arguments 1 and I'm test overloader argument
+-------------------------------------------------------
+overloadMe with two arguments 1 and 2
+overloadMe with return value
 ```
 * 可以看到overloadMe这个函数名被重载了四次，大大提高了函数名的利用率与接口的简洁性。
 
@@ -100,33 +94,28 @@ tags:
 * 看下具体例子(这里先不讨论动态绑定是否完成)：
 
 ```cpp
-    class A
-    {
-      (...)
-    };
-
-    class B : public A
-    {
-      (...)
-    };
-
-    class C : public A
-    {
-      (...)
-    };
-
-    int main()
-    {
-        //a的静态类型和动态类型都是A
-        A* a = new A;
-
-        //A的静态类型是A,动态类型是B
-        A* a = new B;
-
-        //指针地址传递以后，a的静态类型还是A,动态类型是C
-        C* c = new C;
-        a = c;
-    }
+class A
+{
+  (...)
+};
+class B : public A
+{
+  (...)
+};
+class C : public A
+{
+  (...)
+};
+int main()
+{
+    //a的静态类型和动态类型都是A
+    A* a = new A;
+    //A的静态类型是A,动态类型是B
+    A* a = new B;
+    //指针地址传递以后，a的静态类型还是A,动态类型是C
+    C* c = new C;
+    a = c;
+}
 ```
 
 # Override
@@ -141,73 +130,62 @@ tags:
   * 函数名，参数和返回类型必须相同  
 
 ```cpp
-    //没有虚函数的父类
-    class A_NV
-    {
-    public:
-        void foo(){std::cout << "Class A_NoVirtual" << std::endl;}
-    };
-
-    //带虚函数的父类
-    class A_V
-    {
-    public:
-        virtual void foo(){std::cout << "Class A_Virtual" << std::endl;}
-    };
-
-    //因为不是虚函数重写所以子类会隐藏父类同名函数
-    class B_NV : public A_NV
-    {
-    public:
-        void foo(){std::cout << "Class B_NoVirtual" << std::endl;}
-    };
-
-    //子类重写父类虚函数
-    class B_V : public A_V
-    {
-    public:
-        void foo() override {std::cout << "Class B_Virtual" << std::endl;}
-    };
-
-    int main()
-    {
-        //调用A_NV的foo()
-        A_NV* a_nv = new A_NV();
-        a_nv -> foo();
-
-        std::cout << "--------------------------------------------" << std::endl;
-
-        //这里期望调用的是B_NV的foo(),但是动态绑定没有成功，所以使用了静态类型
-        A_NV* a_nv = new B_NV();
-        a_nv -> foo(); 
-
-        std::cout << "--------------------------------------------" << std::endl;
-
-        //调用A_V的foo()
-        A_V* a_v = new A_V();
-        a_v -> foo();
-
-        std::cout << "--------------------------------------------" << std::endl;
-
-        //这里期望调用B_V的foo(), 因为override成功，所以动态绑定完成
-        A_V* a_v = new B_V();
-        a_v -> foo();
-
-        delete a_nv;
-        delete a_v;
-        return 0;
-    }
+//没有虚函数的父类
+class A_NV
+{
+public:
+    void foo(){std::cout << "Class A_NoVirtual" << std::endl;}
+};
+//带虚函数的父类
+class A_V
+{
+public:
+    virtual void foo(){std::cout << "Class A_Virtual" << std::endl;}
+};
+//因为不是虚函数重写所以子类会隐藏父类同名函数
+class B_NV : public A_NV
+{
+public:
+    void foo(){std::cout << "Class B_NoVirtual" << std::endl;}
+};
+//子类重写父类虚函数
+class B_V : public A_V
+{
+public:
+    void foo() override {std::cout << "Class B_Virtual" << std::endl;}
+};
+int main()
+{
+    //调用A_NV的foo()
+    A_NV* a_nv = new A_NV();
+    a_nv -> foo();
+    std::cout << "--------------------------------------------" << std::endl;
+    //这里期望调用的是B_NV的foo(),但是动态绑定没有成功，所以使用了静态类型
+    A_NV* a_nv = new B_NV();
+    a_nv -> foo(); 
+    std::cout << "--------------------------------------------" << std::endl;
+    //调用A_V的foo()
+    A_V* a_v = new A_V();
+    a_v -> foo();
+    std::cout << "--------------------------------------------" << std::endl;
+    //这里期望调用B_V的foo(), 因为override成功，所以动态绑定完成
+    A_V* a_v = new B_V();
+    a_v -> foo();
+    delete a_nv;
+    delete a_v;
+    return 0;
+}
 ```
 
 * 下面是结果
 ```cpp
-    Class A_NoVirtual
-    --------------------------------------------
-    Class A_NoVirtual
-    --------------------------------------------
-    Class A_Virtual
-    --------------------------------------------
-    Class B_Virtual
+Class A_NoVirtual
+--------------------------------------------
+Class A_NoVirtual
+--------------------------------------------
+Class A_Virtual
+--------------------------------------------
+Class B_Virtual
 ```
 
 * ```关于虚函数有几点需要注意的：```
@@ -223,47 +201,40 @@ tags:
 * 可以看下例子：
 
 ```cpp
-    class Overloader
-    {
-    public: 
-        virtual void OverloadMe(){std::cout << "Class Overloader With No Argument" << std::endl;}
-
-        virtual void OverloadMe(uint8_t i){std::cout << "Class Overloader With Argument " << i <<std::endl;}
-    };
-
-    class Overloader_C : public Overloader
-    {
-    public:
-        void OverloadMe() override {std::cout << "Class Overloader_C With No Argument" << std::endl;}
-
-        void OverloadMe(uint_8 i) override {std::cout << "Class Overloader_C With Argument " << i << std::endl;}    
-    };
-
-    int main()
-    {
-        uint8_t i = 1;
-
-        Overloader overloader;
-        overloader.OverloadMe();
-        overloader.OverloadMe(i);
-
-        Overloader* p_overloader = new Overloader_C();
-        p_overloader -> OverloadMe();
-        p_overloader -> OverloadMe(i);
-
-        delete p_overloader;
-        return 0;
-    }
+class Overloader
+{
+public: 
+    virtual void OverloadMe(){std::cout << "Class Overloader With No Argument" << std::endl;}
+    virtual void OverloadMe(uint8_t i){std::cout << "Class Overloader With Argument " << i <<std::endl;}
+};
+class Overloader_C : public Overloader
+{
+public:
+    void OverloadMe() override {std::cout << "Class Overloader_C With No Argument" << std::endl;}
+    void OverloadMe(uint_8 i) override {std::cout << "Class Overloader_C With Argument " << i << std::endl;}    
+};
+int main()
+{
+    uint8_t i = 1;
+    Overloader overloader;
+    overloader.OverloadMe();
+    overloader.OverloadMe(i);
+    Overloader* p_overloader = new Overloader_C();
+    p_overloader -> OverloadMe();
+    p_overloader -> OverloadMe(i);
+    delete p_overloader;
+    return 0;
+}
 ```
 
 * 看下结果：
 
 ```cpp
-    Class Overloader With No Argument
-    --------------------------------------------
-    Class Overloader With Argument 1
-    --------------------------------------------
-    Class Overloader_C With No Argument
-    --------------------------------------------
-    Class Overloader_C With Argument 1
+Class Overloader With No Argument
+--------------------------------------------
+Class Overloader With Argument 1
+--------------------------------------------
+Class Overloader_C With No Argument
+--------------------------------------------
+Class Overloader_C With Argument 1
 ```

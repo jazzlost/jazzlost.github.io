@@ -30,103 +30,107 @@ tags:
 # Game Object在Wwise中的集成
 * #### Q: AkGameObjectID是什么?
 * A: 游戏引擎传给声音引擎表示game object的唯一标识符，无符号64位整型。
+
 ```cpp
 //AkTypes.h中有定义
 typedef unsigned __int64	AkUInt64;
 ```
 
 * #### Q: 怎么注册game object?
-```cpp 
-  //ID为uint64_t
-  const AKGameObjectID car = 1;
-  const AKGameObjectID character = 2;
-  (...)
 
-  auto result_car = AK::SoundEngine::RegisterGameObj(car);
-  if(result_car == AK_Success){...}
-  
-  //双参数版本后面一个参数可以是内部object名称 const char*，这个name作用主要是在Debug版本中方便profile
-  auto result_character = AK::SoundEngine::RegisterGameObj(character, "hero");
-  if(result_character == AK_Success){...}
-   
-  (...)
+```cpp 
+//ID为uint64_t
+const AKGameObjectID car = 1;
+const AKGameObjectID character = 2;
+(...)
+auto result_car = AK::SoundEngine::RegisterGameObj(car);
+if(result_car == AK_Success){...}
+
+//双参数版本后面一个参数可以是内部object名称 const char*，这个name作用主要是在Debug版本中方便profile
+auto result_character = AK::SoundEngine::RegisterGameObj(character, "hero");
+if(result_character == AK_Success){...}
+ 
+(...)
 ```
 
 * #### Q: 怎么注销game object?
+
 ```cpp
-  AK::SoundEngine::UnregisterGameObj(car);
-  AK::SOundEngine::UnregisterGameObj(character);
-  //游戏结束注销所有对象
-  AK::SoundEngine::UnregisterAllGameObj();
+AK::SoundEngine::UnregisterGameObj(car);
+AK::SOundEngine::UnregisterGameObj(character);
+//游戏结束注销所有对象
+AK::SoundEngine::UnregisterAllGameObj();
 ```
 
 * #### Q：Unreal中怎么实现的?
+
 ```cpp
-  #include <AkAudioDevice.h>
-  //注册
-  namespace FAkAudioDevice_Helpers
-  {
-  	void RegisterGameObject(AkGameObjectID in_gameObjId, const FString& Name)
-  	{
-  		//Release版本中不需要监视对象名称，所以改为ID注册对象方式
-  		#ifdef AK_OPTIMIZED
-  		AK::SoundEngine::RegisterGameObj(in_gameObjId);
-  		#else
-  		if (Name.Len() > 0)
-  		{
-  			AK::SoundEngine::RegisterGameObj(in_gameObjId, TCHAR_TO_ANSI(*Name));
-  		}
-  		else
-  		{
-  		AK::SoundEngine::RegisterGameObj(in_gameObjId);
-  		}
-  		#endif
-  	}
-  }
+#include <AkAudioDevice.h>
+//注册
+namespace FAkAudioDevice_Helpers
+{
+	void RegisterGameObject(AkGameObjectID in_gameObjId, const FString& Name)
+	{
+		//Release版本中不需要监视对象名称，所以改为ID注册对象方式
+		#ifdef AK_OPTIMIZED
+		AK::SoundEngine::RegisterGameObj(in_gameObjId);
+		#else
+		if (Name.Len() > 0)
+		{
+			AK::SoundEngine::RegisterGameObj(in_gameObjId, TCHAR_TO_ANSI(*Name));
+		}
+		else
+		{
+		AK::SoundEngine::RegisterGameObj(in_gameObjId);
+		}
+		#endif
+	}
+}
+
+//停用
+void FAkAudioDevice::StopGameObject( UAkComponent * in_pComponent )
+{
+	AkGameObjectID gameObjId = DUMMY_GAMEOBJ;
+	if ( in_pComponent )
+	{
+		gameObjId = in_pComponent->GetAkGameObjectID();
+	}
+	if ( m_bSoundEngineInitialized )
+	{
+		AK::SoundEngine::StopAll( gameObjId );
+	}
+}
+
+//注销函数没有上层包装，直接调用了API接口
+void FAkAudioDevice::Teardown()
+{
+  ...
   
-  //停用
-  void FAkAudioDevice::StopGameObject( UAkComponent * in_pComponent )
-  {
-  	AkGameObjectID gameObjId = DUMMY_GAMEOBJ;
-  	if ( in_pComponent )
-  	{
-  		gameObjId = in_pComponent->GetAkGameObjectID();
-  	}
-  	if ( m_bSoundEngineInitialized )
-  	{
-  		AK::SoundEngine::StopAll( gameObjId );
-  	}
-  }
+  //#define DUMMY_GAMEOBJ ((AkGameObjectID)0x2)
+  AK::SoundEngine::UnregisterGameObj( DUMMY_GAMEOBJ );
   
-  //注销函数没有上层包装，直接调用了API接口
-  void FAkAudioDevice::Teardown()
-  {
-    ...
-    
-    //#define DUMMY_GAMEOBJ ((AkGameObjectID)0x2)
-    AK::SoundEngine::UnregisterGameObj( DUMMY_GAMEOBJ );
-    
-    ...
-  }
-  
-  //即播即销毁的声音对象
-  AkPlayingID FAkAudioDevice::PostEventAtLocation(...)
-  {
-    ...
-  
-    AK::SoundEngine::UnregisterGameObj( objId );
-  
-    ...
-  }
-  
-  //组件的注销
-  void FAkAudioDevice::UnregisterComponent(...)
-  {  
-    //见后文
-  }
+  ...
+}
+
+//即播即销毁的声音对象
+AkPlayingID FAkAudioDevice::PostEventAtLocation(...)
+{
+  ...
+
+  AK::SoundEngine::UnregisterGameObj( objId );
+
+  ...
+}
+
+//组件的注销
+void FAkAudioDevice::UnregisterComponent(...)
+{  
+  //见后文
+}
 ```
 
 * #### Q: 组件(AkComponent)怎么作为game object注册
+
 ```cpp
 #include <AkAudioDevice.h>
 //注册
@@ -191,6 +195,7 @@ void FAkAudioDevice::UnregisterComponent( UAkComponent * in_pComponent )
 ```
 
 * #### Q: 怎么通过组件(AkComponent)找到对应game object ID？
+
 ```cpp
 #include<AkComponent.h>
 //调用这个类型转换
@@ -205,178 +210,149 @@ AkGameObjectID UAkComponent::GetAkGameObjectID() const
 * #### Q: 哪些声音数据结算依赖于game object？
 
 1. ##### Audio Object相关联的所有偏置量(offset)
+
 ```cpp
-	AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
-	{
-		 ...
-		f (m_bSoundEngineInitialized)
-
-		const AkGameObjectID emitterId = in_pEmitter ? i_pEmitter->GetAkGameObjectID() : DUMMY_GAMEOBJ;
-		const AkGameObjectID listenerId = in_pListener ? i_pListener->GetAkGameObjectID() : DUMMY_GAMEOBJ;
-		eResult = AK::SoundEngine::SetGameObjectOutputBusVolume(mitterId,listenerId,in_fControlValue);
-
-		eturn eResult;
-	}
+AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
+{
+	 ...
+	f (m_bSoundEngineInitialized)
+	const AkGameObjectID emitterId = in_pEmitter ? i_pEmitter->GetAkGameObjectID() : DUMMY_GAMEOBJ;
+	const AkGameObjectID listenerId = in_pListener ? i_pListener->GetAkGameObjectID() : DUMMY_GAMEOBJ;
+	eResult = AK::SoundEngine::SetGameObjectOutputBusVolume(mitterId,listenerId,in_fControlValue);
+	eturn eResult;
+}
 ```
 
 2. ##### 发声点位置和朝向
+
 ```cpp
-	//和Event相关的接口
-	auto gameObjID = in_pComponent->GetAkGameObjectID();
-	AKRESULT AkAudioDevice::PostEvent(in_EventName, gameObjID, 	CeateCallbackPackage);
-
-	AKRESULT AK::SoundEngine::SeekOnEvent
-	(TCHAR_TO_AK(*in_EventName),
-	i_pComponent->GetAkGameObjectID(), 
-	in_fPercent,
-	i_bSeekToNearestMarker, 
-	InPlayingID);
-
-	 //和position相关接口
-	AKRESULT FAkAudioDevice::SetPosition(...)
-	{
-		...
-
-		if(in_akComponent->bUseSpatialAudio)
-			return AK::SpatialAudio::SetPosition(in_akComponent->GetAkGameObjectID(), in_SoundPosition);
-		else
-			return AK::SoundEngine::SetPosition	(in_akComponent->GetAkGameObjectID(), in_SoundPosition);
-
-		...
-	}
-
-	AKRESULT FAkAudioDevice::SetMultiplePositions(...)
-	{
-		...
-
-		return AK::SoundEngine::SetMultiplePositions	
-		(n_pGameObjectAkComponent->GetAkGameObjectID(), 
-		aositions.GetData(), 
-		aPosiGetSoundE(in_eMult));
-
-		...
-	}
-
-	void FAkAudioDevice::SetListeners(...)
-	{
-		...
-
-		for (const auto& Listener : in_listenerSet)
-			pListenerIds[index++] = Listener->GetAkGameObjectID();
-
-		AK::SoundEngine::SetListeners(in_pEmitter->GetAkGameObjectID(), pListenerIds, NumListeners);
-
-		...
-	}
-
-	void FAkAudioDevice::UpdateDefaultActiveListeners()
-	{
-		...
-
-		for (auto DefaultListenerIter = m_defaultListeners.CreateConstIterator(); DefaultListenerIter; ++DefaultListenerIter)
-				pListenerIds[index++] = (*DefaultListenerIter)->GetAkGameObjectID();
-
-		AK::SoundEngine::SetDefaultListeners(pListenerIds, NumDefaultListeners);
-
-		...
-	}
-
-	//和component相关接口
-	void FAkAudioDevice::RegisterComponent(...)
-	{
-		...
-
-		const AkGameObjectID gameObjId = in_pComponent->GetAkGameObjectID();
-			FAkAudioDevice_Helpers::RegisterGameObject(gameObjId, WwiseGameObjectName);
-
-		...
-	}
+//和Event相关的接口
+auto gameObjID = in_pComponent->GetAkGameObjectID();
+AKRESULT AkAudioDevice::PostEvent(in_EventName, gameObjID, 	CeateCallbackPackage);
+AKRESULT AK::SoundEngine::SeekOnEvent
+(TCHAR_TO_AK(*in_EventName),
+i_pComponent->GetAkGameObjectID(), 
+in_fPercent,
+i_bSeekToNearestMarker, 
+InPlayingID);
+ //和position相关接口
+AKRESULT FAkAudioDevice::SetPosition(...)
+{
+	...
+	if(in_akComponent->bUseSpatialAudio)
+		return AK::SpatialAudio::SetPosition(in_akComponent->GetAkGameObjectID(), in_SoundPosition);
+	else
+		return AK::SoundEngine::SetPosition	(in_akComponent->GetAkGameObjectID(), in_SoundPosition);
+	...
+}
+AKRESULT FAkAudioDevice::SetMultiplePositions(...)
+{
+	...
+	return AK::SoundEngine::SetMultiplePositions	
+	(n_pGameObjectAkComponent->GetAkGameObjectID(), 
+	aositions.GetData(), 
+	aPosiGetSoundE(in_eMult));
+	...
+}
+void FAkAudioDevice::SetListeners(...)
+{
+	...
+	for (const auto& Listener : in_listenerSet)
+		pListenerIds[index++] = Listener->GetAkGameObjectID();
+	AK::SoundEngine::SetListeners(in_pEmitter->GetAkGameObjectID(), pListenerIds, NumListeners);
+	...
+}
+void FAkAudioDevice::UpdateDefaultActiveListeners()
+{
+	...
+	for (auto DefaultListenerIter = m_defaultListeners.CreateConstIterator(); DefaultListenerIter; +DefaultListenerIter)
+			pListenerIds[index++] = (*DefaultListenerIter)->GetAkGameObjectID();
+	AK::SoundEngine::SetDefaultListeners(pListenerIds, NumDefaultListeners);
+	...
+}
+//和component相关接口
+void FAkAudioDevice::RegisterComponent(...)
+{
+	...
+	const AkGameObjectID gameObjId = in_pComponent->GetAkGameObjectID();
+		FAkAudioDevice_Helpers::RegisterGameObject(gameObjId, WwiseGameObjectName);
+	...
+}
 ```
 3. ##### Game Sync类数据(State, Switch,RTPC)
 ```cpp
-	AKRESULT FAkAudioDevice::SetSwitch(...)
+AKRESULT FAkAudioDevice::SetSwitch(...)
+{
+	...
+
+	auto SwitchGroupID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszSwitchGroup));
+	auto SwitchStateID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszSwitchState));
+	eResult = AK::SoundEngine::SetSwitch(SwitchGroupID, SwitchStateID, GameObjID);
+
+	...
+}
+
+AKRESULT FAkAudioDevice::SetState(...)
+{
+	...
+
+	auto StateGroupID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszStateGroup));
+	auto StateID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszState));
+	eResult = AK::SoundEngine::SetState(StateGroupID, StateID);
+
+	...
+}
+
+AKRESULT FAkAudioDevice::SetRTPCValue(...)
+{
+	...
+
+	AkGameObjectID GameObjID = AK_INVALID_GAME_OBJECT;
+	if ( in_pActor )
 	{
-		...
-
-		auto SwitchGroupID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszSwitchGroup));
-		auto SwitchStateID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszSwitchState));
-		eResult = AK::SoundEngine::SetSwitch(SwitchGroupID, SwitchStateID, GameObjID);
-
-		...
+		eResult = GetGameObjectID( in_pActor, GameObjID );
+		if ( eResult != AK_Success )
+			return eResult;
 	}
+	eResult = AK::SoundEngine::SetRTPCValue(TCHAR_TO_A(in_pszRtpcName), in_value, GameObjID,in_interpolationTimeMs );
 
-	AKRESULT FAkAudioDevice::SetState(...)
-	{
-		...
-
-		auto StateGroupID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszStateGroup));
-		auto StateID = AK::SoundEngine::GetIDFromString(TCHAR_TO_AK(in_pszState));
-		eResult = AK::SoundEngine::SetState(StateGroupID, StateID);
-
-		...
-	}
-
-	AKRESULT FAkAudioDevice::SetRTPCValue(...)
-	{
-		...
-
-		AkGameObjectID GameObjID = AK_INVALID_GAME_OBJECT;
-		if ( in_pActor )
-		{
-			eResult = GetGameObjectID( in_pActor, GameObjID );
-			if ( eResult != AK_Success )
-				return eResult;
-		}
-		eResult = AK::SoundEngine::SetRTPCValue(TCHAR_TO_A(in_pszRtpcName), in_value, GameObjID,in_interpolationTimeMs );
-
-		...
-	}
+	...
+}
 ```
 4. ##### 空间类DSP效果器所需数据
 ```cpp
-	AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
-	{
-		...
-
-		eResult = AK::SoundEngine::SetScalingFactor(AkComponent->GetAkGameObjectID(), ScalingFactor);
-
-		...
-	}
-
-	AKRESULT FAkAudioDevice::SetAuxSends(...)
-	{
-		...
-
-	 AK::SpatialAudio::SetEmitterAuxSendValues(n_akComponent->GetAkGameObjectID(), in_AuxSendValues.GetData(), n_AuxSendValues.Num());
-
-	    ...
-	}
-
-	void FAkAudioDevice::RegisterSpatialAudioEmitter()
-	{
-		...
-
-		AK::SpatialAudio::RegisterEmitter(in_pComponent->GetAkGameObjectID(), settings);
-
-		...
-	}
+AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
+{
+	...
+	eResult = AK::SoundEngine::SetScalingFactor(AkComponent->GetAkGameObjectID(), ScalingFactor);
+	...
+}
+AKRESULT FAkAudioDevice::SetAuxSends(...)
+{
+	...
+ AK::SpatialAudio::SetEmitterAuxSendValues(n_akComponent->GetAkGameObjectID(), in_AuxSendValues.GetData(),n_AuxSendValues.Num());
+    ...
+}
+void FAkAudioDevice::RegisterSpatialAudioEmitter()
+{
+	...
+	AK::SpatialAudio::RegisterEmitter(in_pComponent->GetAkGameObjectID(), settings);
+	...
+}
 ```
 5. ##### 声笼(Obstruction)和声障(Occlusion)计算所需数据
 ```cpp
-	void UAkComponent::UpdateOcclusionObstruction()
-	{ ObstructionService.UpdateObstructionOcclusion
-		(Listeners, GetPosition(), GetOwner(), 
-		GetSpatialAudioRoom(), 
-		OcclusionCollisionChannel, 	
-		OcclusionRefreshInterval); 
-	}
-
-	FAkAudioDevice::PostEvent(...)
-	{
-		...
-
-		in_pComponent->UpdateOcclusionObstruction();
-
-		...
-	}
+void UAkComponent::UpdateOcclusionObstruction()
+{ ObstructionService.UpdateObstructionOcclusion
+	(Listeners, GetPosition(), GetOwner(), 
+	GetSpatialAudioRoom(), 
+	OcclusionCollisionChannel, 	
+	OcclusionRefreshInterval); 
+}
+FAkAudioDevice::PostEvent(...)
+{
+	...
+	in_pComponent->UpdateOcclusionObstruction();
+	...
+}
 ```

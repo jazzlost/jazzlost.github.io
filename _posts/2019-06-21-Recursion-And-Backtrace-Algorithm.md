@@ -30,15 +30,14 @@ tags:
   * ```递归函数```：
   
   ```cpp
-  
-    int foo(int n)
-    {
-        if(n == 1)
-          return 1;
-        if(n == 2)
-          return 2;
-        return f(n-1) + f(n-2);
-    } 
+  int foo(int n)
+  {
+      if(n == 1)
+        return 1;
+      if(n == 2)
+        return 2;
+      return f(n-1) + f(n-2);
+  } 
   ```
 
 * ## 归并排序
@@ -54,89 +53,85 @@ tags:
   * ```递归函数```：
   
   ```cpp
-    //------------sort---------------------------------------------
-    void sort(std::vector<int>& nums, int left, int right)
+  //------------sort---------------------------------------------
+  void sort(std::vector<int>& nums, int left, int right)
+  {
+    if(left >= right)
+      return;
+    int mid = (left + right) / 2;
+    //平分左部分
+    sort(nums, left , mid);
+    //平分右部分
+    sort(nums, mid + 1, right);
+    //合并排序左右部分
+    merge(nums, left, mid , right);
+  }
+  //--------------merge------------------------------------------
+  void merge(std::vector<int>& nums, int left, int mid, int right)
+  {
+    std::vector<int> sorted;
+    //两个位置指针分别指向左部分开头和右部份开头
+    int p1 = left;
+    int p2 = mid + 1;
+    //两个位置指针都没到分组末尾
+    while(l <= mid && r <= right)
     {
-      if(left >= right)
-        return;
-      int mid = (left + right) / 2;
-      //平分左部分
-      sort(nums, left , mid);
-      //平分右部分
-      sort(nums, mid + 1, right);
-      //合并排序左右部分
-      merge(nums, left, mid , right);
-    }
-
-    //--------------merge------------------------------------------
-    void merge(std::vector<int>& nums, int left, int mid, int right)
-    {
-      std::vector<int> sorted;
-      //两个位置指针分别指向左部分开头和右部份开头
-      int p1 = left;
-      int p2 = mid + 1;
-
-      //两个位置指针都没到分组末尾
-      while(l <= mid && r <= right)
-      {
-        //把左右指针中较小的放入暂存数组
-        if(nums[p1] <= nums[p2])
-        {
-          sorted.push_back(nums[p1]);
-          p1++;
-        }
-        else
-        {
-          sorted.push_back(nums[p2])
-          p2++;
-        }
-      }
-      //左右指针中有一个走到末尾后，把另一组剩下的数据放入暂存数组中
-      while(p1<=mid)
+      //把左右指针中较小的放入暂存数组
+      if(nums[p1] <= nums[p2])
       {
         sorted.push_back(nums[p1]);
         p1++;
       }
-      while(p2 <= right)
+      else
       {
-        sorted.push_back(nums[p1]);
-        p1++;
-      }
-
-      //把暂存数组数据移动到原数组
-      for(int i = 0; i < sorted.size(); i++)
-      {
-        nums[left + i] = sorted[i];
+        sorted.push_back(nums[p2])
+        p2++;
       }
     }
+    //左右指针中有一个走到末尾后，把另一组剩下的数据放入暂存数组中
+    while(p1<=mid)
+    {
+      sorted.push_back(nums[p1]);
+      p1++;
+    }
+    while(p2 <= right)
+    {
+      sorted.push_back(nums[p1]);
+      p1++;
+    }
+    //把暂存数组数据移动到原数组
+    for(int i = 0; i < sorted.size(); i++)
+    {
+      nums[left + i] = sorted[i];
+    }
+  }
   ```
 
 # 回溯 Backtrack
 * 回溯类题目属于多解问题，这种问题一般通过构建解空间树，运用BFS或者DFS方式来遍历搜索，然后用剪枝函数剔除不满足条件的节点，多次迭代来组合出多组解。下面是用DFS求解的模板：
   
   ```cpp
-    template<typename T>
-    void DFS(vector<T>& res, vector<T>& temp, int start)
+  template<typename T>
+  void DFS(vector<T>& res, vector<T>& temp, int start)
+  {
+    //剪枝函数,提出不满出条件的解，同时把满足条件的解放入结果容器
+    if(...)
     {
-      //剪枝函数,提出不满出条件的解，同时把满足条件的解放入结果容器
-      if(...)
-      {
-        res.push_back(temp);
-        return;
-      }
-
-      //DFS遍历迭代
-      for(int i = start; i < res.size(); i++)
-      {
-        //把解空间树的节点先放入临时容器
-        temp.push_back(i);
-        //递归x下一层的节点
-        //这里传入的start参数根据题目要求会有不同，一般来说解中可以重复此节点的传入i，不可以重复  的传入i+1
-        DFS(res, temp, i);
-        //每次找到一组解后需要弹出临时容器最后一个元素，以便新的查找插入
-        temp.pop_back();
-      }
+      res.push_back(temp);
+      return;
     }
+    //DFS遍历迭代
+    for(int i = start; i < res.size(); i++)
+    {
+      //把解空间树的节点先放入临时容器
+      temp.push_back(i);
+      //递归x下一层的节点
+      //这里传入的start参数根据题目要求会有不同，一般来说解中可以重复此节点的传入i，不可以重复  的传入i+1
+      DFS(res, temp, i);
+      //每次找到一组解后需要弹出临时容器最后一个元素，以便新的查找插入
+      temp.pop_back();
+    }
+  }
   ```
   
 * ## Letter Combinations of a Phone Number
@@ -144,61 +139,53 @@ tags:
   ![](\img\in-post\RecursionAndBacktrace\phone.png)
   
   ```cpp  
-    class Solution
-    {
-    public：
-        void findCombinations(std::string digits, int index, std::string foundStr)
-        {
-           //剪枝函数
-           if(index == digits.size())
-           {
-             res.push_back(foundStr);
-             return;
-           }
-
-           char digit = digits[index];
-           //取出数字对应字符串
-           std::string subStr = m_map.find(digit)->second;
-
-           for(int i = 0; i < subStr.size(); i++)
-           {
-             //把找到字符放入字符集
-             foundStr.push_back(subStr[i]);
-             //递归下一层
-             findCombinations(digits, index+1, foundStr);
-             //回溯之前删除最后一个字符
-             foundStr.erase(index);
-           }
-        }
-
-        //入口调用函数
-        vector<std::string> letterCombinations(std::string digits)
-        {
-          if(digits == "")
-            return m_res;
-
-          std::string foundStr;
-          findCombinations(digits, 0, foundStr);
-
-           return m_res;
-        }
-
-
-    private:
-        std::map<char, const std::string> m_map
-        {
-            {'2', "abc"},
-            {'3', "def"},
-            {'4', "ghi"},
-            {'5', "jkl"},
-            {'6', "mno"},
-            {'7', "pqrs"},
-            {'8', "tuv"},
-            {'9', "wxyz"}
-        };
-
-        std::vector<std::string> m_res; 
-    }
+  class Solution
+  {
+  public:
+      void findCombinations(std::string digits, int index, std::string foundStr)
+      {
+         //剪枝函数
+         if(index == digits.size())
+         {
+           res.push_back(foundStr);
+           return;
+         }
+         char digit = digits[index];
+         //取出数字对应字符串
+         std::string subStr = m_map.find(digit)->second;
+         for(int i = 0; i < subStr.size(); i++)
+         {
+           //把找到字符放入字符集
+           foundStr.push_back(subStr[i]);
+           //递归下一层
+           findCombinations(digits, index+1, foundStr);
+           //回溯之前删除最后一个字符
+           foundStr.erase(index);
+         }
+      }
+      //入口调用函数
+      vector<std::string> letterCombinations(std::string digits)
+      {
+        if(digits == "")
+          return m_res;
+        std::string foundStr;
+        findCombinations(digits, 0, foundStr);
+         return m_res;
+      }
+  private:
+      std::map<char, const std::string> m_map
+      {
+          {'2', "abc"},
+          {'3', "def"},
+          {'4', "ghi"},
+          {'5', "jkl"},
+          {'6', "mno"},
+          {'7', "pqrs"},
+          {'8', "tuv"},
+          {'9', "wxyz"}
+      };
+      std::vector<std::string> m_res; 
+  }
   ```
 
 
@@ -220,44 +207,41 @@ tags:
   这道题思路和前面一道基本相同，也是递归在回溯中的运用。
 
   ```cpp
-    class Solution 
-    {
-    public:
-        std::vector<std::vector<int>> permute(std::vector<int>& nums) 
-        {
-            if(nums.size() == 0)
-              return m_res;
-
-            m_valid = std::vector<bool>(nums.size(), true);
-            std::vector<int> out;
-            DFS(nums, out);
+  class Solution 
+  {
+  public:
+      std::vector<std::vector<int>> permute(std::vector<int>& nums) 
+      {
+          if(nums.size() == 0)
             return m_res;
-        }
-
-        void DFS(std::vector<int>& nums, std::vector<int>& out)
-        {
-            //剪枝函数
-            if(out.size() == nums.size())
-            {
-                m_res.push_back(out);
-                return;
-            } 
-
-            for(int i = 0; i < nums.size(); i++)
-            {
-                //因为每个数只能用一次，且每次迭代需要遍历所有可能，所以标记用过的节点
-                if(m_valid[i])
-                {
-                    out.push_back(nums[i]);
-                    m_valid[i] = false;
-                    DFS(nums, index+1, out);
-                    out.pop_back();
-                    m_valid[i] = true;
-                }
-            }
-            return;
-        }
-    }
+          m_valid = std::vector<bool>(nums.size(), true);
+          std::vector<int> out;
+          DFS(nums, out);
+          return m_res;
+      }
+      void DFS(std::vector<int>& nums, std::vector<int>& out)
+      {
+          //剪枝函数
+          if(out.size() == nums.size())
+          {
+              m_res.push_back(out);
+              return;
+          } 
+          for(int i = 0; i < nums.size(); i++)
+          {
+              //因为每个数只能用一次，且每次迭代需要遍历所有可能，所以标记用过的节点
+              if(m_valid[i])
+              {
+                  out.push_back(nums[i]);
+                  m_valid[i] = false;
+                  DFS(nums, index+1, out);
+                  out.pop_back();
+                  m_valid[i] = true;
+              }
+          }
+          return;
+      }
+  }
   ```
 
 * ## Combinations
@@ -278,41 +262,41 @@ tags:
   ```
   
   ```cpp
-    class Solution 
-    {
-    public:
-        std::vector<std::vector<int>> combine(int n, int k) 
-        {
-            std::vector<std::vector<int>> res;
-            std::vector<int> temp;
-          
-            if(n < 1 || k > n)
-              return res;
-          
-            DFS(res, temp, n, k, 0);
-          
+  class Solution 
+  {
+  public:
+      std::vector<std::vector<int>> combine(int n, int k) 
+      {
+          std::vector<std::vector<int>> res;
+          std::vector<int> temp;
+        
+          if(n < 1 || k > n)
             return res;
-        }
-  
-        void DFS(std::vector<std::vector<int>>& res, std::vector<int>& temp,
-                int n, int k, int start)
-        {
-            //剪枝函数
-            if(temp.size() == k)
-            {
-                res.push_back(temp);
-                return;
-            }
-                    
-            for(int i = start; i < n; ++i)
-            {
-                temp.push_back(i + 1);
-                //数字不能重复使用所以递归参数用i+1
-                DFS(res, temp, n, k, i+1);
-                temp.pop_back();                      
-            }
-        }
-    };
+        
+          DFS(res, temp, n, k, 0);
+        
+          return res;
+      }
+
+      void DFS(std::vector<std::vector<int>>& res, std::vector<int>& temp,
+              int n, int k, int start)
+      {
+          //剪枝函数
+          if(temp.size() == k)
+          {
+              res.push_back(temp);
+              return;
+          }
+                  
+          for(int i = start; i < n; ++i)
+          {
+              temp.push_back(i + 1);
+              //数字不能重复使用所以递归参数用i+1
+              DFS(res, temp, n, k, i+1);
+              temp.pop_back();                      
+          }
+      }
+  };
   ```
 
     

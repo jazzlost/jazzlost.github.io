@@ -29,159 +29,147 @@ tags:
 * 回调函数打包类。这个接口类接受用户传递的回调函数和附加参数，其子类实现一个HandleAction函数，这个函数中会用我们传递的回调参数来调用我们自定义的回调函数，同时也可以添加一些自定义功能
 
 ```cpp
-	//  回调函数签名
-	typedef void(*CallbackFunc)(void *in_pCookie); 
-	//  接口类
-	class IEventCallbackPackage
+//  回调函数签名
+typedef void(*CallbackFunc)(void *in_pCookie); 
+//  接口类
+class IEventCallbackPackage
+{
+public:
+	virtual void HandleAction() = 0;
+};
+//  具体回调打包函数的定义
+class CEventCallbackPackage : public IEventCallbackPackage
+{
+public:
+	//  in_pCallback是用户定义回调函数，in_pCookie是用户定义回调参数(可选)，packageNum是用户定义其它传递值(可选)
+    CEventCallbackPackage(CallbackFunc in_pCallback, void *in_pCookie, int packageNum) : in_pCallbackFun(in_pCallback), 	in_pCookie(in_pCookie), packageNum(packageNum) {}
+	//  具体的HandleAction行为，可以通过继承定义多个。我们这里打印字符和package number
+	virtual void HandleAction() override
 	{
-	public:
-		virtual void HandleAction() = 0;
-	};
-	//  具体回调打包函数的定义
-	class CEventCallbackPackage : public IEventCallbackPackage
-	{
-	public:
-		//  in_pCallback是用户定义回调函数，in_pCookie是用户定义回调参数(可选)，packageNum是用户定义其它传递值(可选)
-	    CEventCallbackPackage(CallbackFunc in_pCallback, void *in_pCookie, int packageNum) : in_pCallbackFunc(in_pCallback), 	in_pCookie(in_pCookie), packageNum(packageNum) {}
-
-		//  具体的HandleAction行为，可以通过继承定义多个。我们这里打印字符和package number
-		virtual void HandleAction() override
-		{
-			in_pCallbackFunc(in_pCookie);
-			std::cout << packageNum << std::endl;
-		}
-
-	private:
-		CallbackFunc in_pCallbackFunc;
-		void *in_pCookie;
-		int packageNum;
-	};
+		in_pCallbackFunc(in_pCookie);
+		std::cout << packageNum << std::endl;
+	}
+private:
+	CallbackFunc in_pCallbackFunc;
+	void *in_pCookie;
+	int packageNum;
+};
 ```
 
 # CallbackManager
 * 回调管理类。这里是创建具体的回调包，以及对打好的回调包进一步包装成更高层的回调函数
 
 ```cpp
-	class CallbackManager
+class CallbackManager
+{
+public:
+	//  创建回调包
+    IEventCallbackPackage *CreateCallbackPackage(CallbackFunc in_pCallback, void *in_pCookie, int packageNum)
 	{
-	public:
-		//  创建回调包
-	    IEventCallbackPackage *CreateCallbackPackage(CallbackFunc in_pCallback, void *in_pCookie, int packageNum)
+		IEventCallbackPackage *package = new CEventCallbackPackage(in_pCallback, in_pCookie, packageNum);
+		return package;
+	}
+    //  包触发器，出发包内的函数调用
+	static void AudioEventCallbackFunc(void *cb_package)
+	{
+		if (cb_package)
 		{
-			IEventCallbackPackage *package = new CEventCallbackPackage(in_pCallback, in_pCookie, packageNum);
-			return package;
+			auto package = (IEventCallbackPackage *)cb_package;
+			if (package)
+				package->HandleAction();
 		}
-	    //  包触发器，出发包内的函数调用
-		static void AudioEventCallbackFunc(void *cb_package)
-		{
-			if (cb_package)
-			{
-				auto package = (IEventCallbackPackage *)cb_package;
-				if (package)
-					package->HandleAction();
-			}
-		}
-	};
+	}
+};
 ```
 
 # AudioDevice
 * 业务逻辑类。具体的PostEvent业务在这里调用,聚合CallbackManager类，同时依赖Wwise SDK中的PostEvent接口
 
 ```cpp
-	class AudioDevice
+class AudioDevice
+{
+public:
+	AudioDevice( ): callBackManager(new CallbackManager()){}
+	void AudioEventPost(CallbackFunc in_pCallback, void *in_pCookie, int packageNum)
 	{
-	public:
-		AudioDevice( ): callBackManager(new CallbackManager()){}
-
-		void AudioEventPost(CallbackFunc in_pCallback, void *in_pCookie, int packageNum)
+		//  通过lambda函数调用CreateCallbackPackage来打包
+		AudioEventPost(packageNum, [this,in_pCallback, in_pCookie](int packageNum) { return callBackManager->CreateCallbackPackage(in_pCallback, in_pCookie, packageNum); });
+	}
+private:
+	template <typename CallbackPackage>
+	void AudioEventPost(int packageNum, CallbackPackage createPackage)
+	{
+		auto cb_package = createPackage(packageNum);
+		if (cb_package)
 		{
-			//  通过lambda函数调用CreateCallbackPackage来打包
-			AudioEventPost(packageNum, [this,in_pCallback, in_pCookie](int packageNum) { return 	callBackManager->CreateCallbackPackage(in_pCallback, in_pCookie, packageNum); });
+			AK::GetAK()->PostEvent(&
+			//  将打好的包放入包触发器中
+			CallbackManager::AudioEventCallbackFunc, cb_package);
 		}
-	private:
-		template <typename CallbackPackage>
-		void AudioEventPost(int packageNum, CallbackPackage createPackage)
-		{
-			auto cb_package = createPackage(packageNum);
-			if (cb_package)
-			{
-				AK::GetAK()->PostEvent(&
-				//  将打好的包放入包触发器中
-				CallbackManager::AudioEventCallbackFunc, cb_package);
-			}
-		}
-
-		CallbackManager *callBackManager;
-	};
+	}
+	CallbackManager *callBackManager;
+};
 ```
 # AK::SounEngine::PostEvent
 
 ```cpp
-	//  Wwise原本的PostEvent接口
-	AkPlayingID AK::SoundEngine::PostEvent
-	(AkUniqueID in_eventID,
-	AkGameObjectID in_gameObjectID,
-	AkUInt32 in_uFlags = 0,
-	AkCallbackFunc in_pfnCallback = NULL,
-	void* in_pCookie = NULL,
-	AkUInt32 in_cExternals = 0,
-	AkExternalSourceInfo *in_pExternalSources = NULL,
-	AkPlayingID in_PlayingID = AK_INVALID_PLAYING_ID)
-
-	//  因为我们主要验证PostEvent的Callback部分，而且要调用Wwise还要初始化SounEngine。所以我们就简化了原接口
-	class AK
+//  Wwise原本的PostEvent接口
+AkPlayingID AK::SoundEngine::PostEvent
+(AkUniqueID in_eventID,
+AkGameObjectID in_gameObjectID,
+AkUInt32 in_uFlags = 0,
+AkCallbackFunc in_pfnCallback = NULL,
+void* in_pCookie = NULL,
+AkUInt32 in_cExternals = 0,
+AkExternalSourceInfo *in_pExternalSources = NULL,
+AkPlayingID in_PlayingID = AK_INVALID_PLAYING_ID)
+//  因为我们主要验证PostEvent的Callback部分，而且要调用Wwise还要初始化SounEngine。所以我们就简化了原接口
+class AK
+{
+public:
+	void PostEvent(CallbackFunc in_pCallback, void *in_pCookie)
 	{
-	public:
-		void PostEvent(CallbackFunc in_pCallback, void *in_pCookie)
-		{
-			in_pCallback(in_pCookie);
-		}
-
-		static AK* GetAK()
-		{
-			static AK* AKDevice;
-			return AKDevice;
-		}
-	private:
-		AK();
-		~AK();
-		AK(const AK&);
-		AK& operator=(const AK&);
-	};
+		in_pCallback(in_pCookie);
+	}
+	static AK* GetAK()
+	{
+		static AK* AKDevice;
+		return AKDevice;
+	}
+private:
+	AK();
+	~AK();
+	AK(const AK&);
+	AK& operator=(const AK&);
+};
 ```
 
 # 测试
 
 ```cpp
-	//  自定义回调参数类型
-	struct Cookie
-	{
-		std::string s;
-	};
-
-	//  自定义回调函数，签名需要和AKCallbackFunc一致
-	void myCallbackFun(void *cookie)
-	{
-		auto out_pCookie = (Cookie *)cookie;
-		std::cout << out_pCookie->s << std::endl;
-	}
-
-	int main()
-	{
-		//  实例化cookie
-		Cookie *p_cookie = new Cookie{"The Callback From Cookie! And The Package Number Is ";}
-		//  实例化AudioDevice
-		AudioDevice* audioDevice = new AudioDevice();
-
-		audioDevice->AudioEventPost(&myCallbackFun, p_cookie, 8);
-
-		getchar();
-
-		delete p_cookie;
-		delete audioDevice;
-
-		return 0;
-	}
+//  自定义回调参数类型
+struct Cookie
+{
+	std::string s;
+};
+//  自定义回调函数，签名需要和AKCallbackFunc一致
+void myCallbackFun(void *cookie)
+{
+	auto out_pCookie = (Cookie *)cookie;
+	std::cout << out_pCookie->s << std::endl;
+}
+int main()
+{
+	//  实例化cookie
+	Cookie *p_cookie = new Cookie{"The Callback From Cookie! And The Package Number Is ";}
+	//  实例化AudioDevice
+	AudioDevice* audioDevice = new AudioDevice();
+	audioDevice->AudioEventPost(&myCallbackFun, p_cookie, 8);
+	getchar();
+	delete p_cookie;
+	delete audioDevice;
+	return 0;
+}
 ```
 ![](\img\in-post\PostEventInWwiseUnrealIntegration\result.png)
 
