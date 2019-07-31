@@ -15,18 +15,18 @@ tags:
 # 前言
 * Q: 本文讨论重点是什么？
 
-  A: Wwise Unreal Integration中对于PostEvent接口的设计和扩展
+  A: Wwise Unreal Integration中对于```PostEvent接口```的设计和扩展
 
 * Q: 本文探讨的初衷
 
   A: 在看过Wwise给PostEvent做的接口Wrap以后，觉得这种设计值得学习借鉴
 
-* 这个结构简化了原本集成中的一些参数和功能，意在简略表现设计思路 
+* 这个结构简化了原本集成中的一些参数和功能，意在```简略表现设计思路``` 
 
 ![](\img\in-post\PostEventInWwiseUnrealIntegration\CallbackTest.png)
 
 # EventCallbackPackage
-* 回调函数打包类。这个接口类接受用户传递的回调函数和附加参数，其子类实现一个HandleAction函数，这个函数中会用我们传递的回调参数来调用我们自定义的回调函数，同时也可以添加一些自定义功能
+* 回调函数```打包类```。这个接口类接受用户传递的回调函数和附加参数，其子类实现一个HandleAction函数，这个函数中会用我们传递的回调参数来调用我们自定义的回调函数，同时也可以添加一些自定义功能
 
 ```cpp
 //  回调函数签名
@@ -57,7 +57,7 @@ private:
 ```
 
 # CallbackManager
-* 回调管理类。这里是创建具体的回调包，以及对打好的回调包进一步包装成更高层的回调函数
+* ```回调管理类```。这里是创建具体的回调包，以及对打好的回调包进一步包装成更高层的回调函数
 
 ```cpp
 class CallbackManager
@@ -83,7 +83,7 @@ public:
 ```
 
 # AudioDevice
-* 业务逻辑类。具体的PostEvent业务在这里调用,聚合CallbackManager类，同时依赖Wwise SDK中的PostEvent接口
+* ```业务逻辑类```。具体的PostEvent业务在这里调用,聚合CallbackManager类，同时依赖Wwise SDK中的PostEvent接口
 
 ```cpp
 class AudioDevice
@@ -175,7 +175,7 @@ int main()
 
 
 # Wwise中Music回调的测试
-*  这里提供一个事件回调的具体测试，在music的每一拍进行一个回调获取拍速信息
+*  这里提供一个事件回调的具体测试，在music的每一拍进行一个回调```获取拍速信息```
 
 *  演示视频
 	<iframe src="//player.bilibili.com/player.html?aid=61132249&cid=106362548&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="800" height="600"> </iframe>
@@ -185,4 +185,4 @@ int main()
 
 
 # 总结
-* AK::SoundEngine::PostEvent()接口接收一个自定义回调函数和一个回调参数。集成中通过一个打包类接口来扩展自定义的回调函数，最后传递给PostEvent一个打好的回调包以及一个包触发器函数。这样的实现体现了开放封闭原则，增强了可扩展性。
+* AK::SoundEngine::PostEvent()接口接收一个自定义```回调函数```和一个```回调参数```。集成中通过一个打包类接口来扩展自定义的回调函数，最后传递给PostEvent一个打好的```回调包```以及一个```包触发器函数```。这样的实现体现了开放封闭原则，增强了可扩展性。
