@@ -3,7 +3,7 @@ layout: post
 title: "Smart Pointers与RAII技术"
 subtitle: "Use RAII To Manager Resource"
 author: "李AA"
-header-img: "img/post-bg-music-header_745px.jpg"
+header-img: "img/blog-bg-sea.jpg"
 tags:
     - C++
 ---

@@ -3,11 +3,10 @@ layout: post
 title: "Wwise中的GameObject集成与使用"
 subtitle: "Learn About Game Object In Wwise"
 author: "李AA"
-header-img: "img/post-bg-music-header_745px.jpg"
+header-img: "img/blog-bg-violin.jpg"
 tags:
     - Wwise
     - Unreal
-    - Game Object
 ---
 
 * TOC

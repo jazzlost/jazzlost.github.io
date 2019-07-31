@@ -3,7 +3,7 @@ layout: post
 title: "Wwise声音引擎的初始化"
 subtitle: "The Initializaiton of Wwise Sound Engine"
 author: "李AA"
-header-img: "img/post-bg-universe.jpg"
+header-img: "img/blog-bg-frame.png"
 tags:
     - Wwise
 ---
@@ -275,7 +275,7 @@ tags:
 			AkPlatformInitSettings platformInitSettings;
 			//创建引擎默认初始化设置
 			AK::SoundEngine::GetDefaultInitSettings( initSettings );
-			/创建引擎默认平台初始化设置
+			//创建引擎默认平台初始化设置
 			AK::SoundEngine::GetDefaultPlatformInitSettings( platformInitSettings );
 
 			//自定义设置

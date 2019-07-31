@@ -6,7 +6,7 @@ author: "李AA"
 header-img: "img/post-bg-music-header_745px.jpg"
 tags:
     - Wwise
-    - Compression
+    - Audio
 ---
 
 * TOC
