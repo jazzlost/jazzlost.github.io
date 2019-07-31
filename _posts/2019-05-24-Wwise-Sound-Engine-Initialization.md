@@ -3,7 +3,7 @@ layout: post
 title: "Wwise声音引擎的初始化"
 subtitle: "The Initializaiton of Wwise Sound Engine"
 author: "李AA"
-header-img: "img/blog-bg-frame.png"
+header-img: "img/blog-theme.jpg"
 tags:
     - Wwise
 ---
@@ -22,6 +22,7 @@ tags:
 
 # MemoryHook
 * 在AkTypes.h文件中有以下extern声明，具体定义自己根据系统和需求实现
+
 ```cpp
 	namespace AK
 	{  
@@ -31,6 +32,7 @@ tags:
 	}
 ```
 * 可以参考一下Unreal Engine4的集成，通过UnrealMemory中的接口在AkAudioDevice.cpp中有实现
+
 ```cpp
 
 	namespace AK
@@ -101,6 +103,7 @@ tags:
 
 # Memory Manager
 * 然后最先初始化内存管理
+
 ```cpp
 	#include <AK/SoundEngine/Common/AkMemoryMgr.h>     //Memory Manager     
 	#include <AK/SoundEngine/Common/AkModule.h>      //Default memory and stream managers           
@@ -122,6 +125,7 @@ tags:
 ```
 
 * 参考Unreal4中设置, 把所有初始化设置放在EnsureInitialized()
+
 ```cpp
 	bool FAkAudioDevice::EnsureInitialized()
 	{
@@ -237,6 +241,7 @@ tags:
 	```
 # Sound Engine
   * 前两项初始化成功后就可以初始化Sound Engine了
+	
 	```cpp
 
 		#include <AK/SoundEngine/Common/AkSoundEngine.h>                // Sound engine
@@ -266,6 +271,7 @@ tags:
 	```
 
   * 参考Unreal4集成
+	
 	```cpp
 		bool FAkAudioDevice::EnsureInitialized()
 		{
@@ -326,6 +332,7 @@ tags:
 	```
 # Music Engine
   * 如果游戏用到Wwise的互动音乐部分，则需要初始化Music Engine
+	
 	```cpp
 
 		#include <AK/MusicEngine/Common/AkMusicEngine.h>                // Music Engine
@@ -352,6 +359,7 @@ tags:
 	```
 
   * 参考Unreal4集成
+	
 	```cpp
 		bool FAkAudioDevice::EnsureInitialized()
 		{
@@ -412,6 +420,7 @@ tags:
 	```
 
   * Unreal4集成中按平台和版本做了一些自定义设置
+	
 	```cpp
 	
 		//Release版本中关闭

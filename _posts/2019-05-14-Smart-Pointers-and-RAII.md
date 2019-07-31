@@ -21,6 +21,7 @@ tags:
 * # 智能指针
   * ## auto_ptr
   1. auto_ptr的特点是在析构函数调用的时候会释放其中raw_pointer所指的资源
+    
     ```cpp
         //一个获取资源的类
         class Resource()
@@ -47,6 +48,7 @@ tags:
         }//函数结束时会调用pSource析构函数，同时释放资源
     ```
     1. 为了防止多个auto_ptr指向同一资源，导致被释放多次，auto_ptr的特性是当调用拷贝构造函数或者赋值运算符复制它时，被复制的auto_ptr会变成nullptr，以保证只有一个auto_ptr只想同一个资源。
+    
     ```cpp
         //一个获取资源的类
         class Resource()
@@ -74,6 +76,7 @@ tags:
 
   * ## shared_ptr
     1. shared_ptr增加了引用计数，每次有新的shared_ptr指向同一个资源时计数会增加，当计数为0时自动释放资源。
+    
     ```cpp
         //一个获取资源的类
         class Resource()
@@ -112,6 +115,7 @@ tags:
    
   * ## unique_ptr
     1. unique_ptr和auto_ptr的区别在于不允许拷贝构造和赋值，也就是不允许复制。
+    
     ```cpp
         //一个获取资源的类
         class Resource()
@@ -144,6 +148,7 @@ tags:
     * ### 对于拷贝的限制
       * Q: 为什么要禁止拷贝？
       * A: 对于一些资源的RAII类，复制行为本身是不合理的，像是系统mutex类如果进行了copy将增加管理的风险，和大量重复资源的占用。
+    
     ```cpp
         //可以将复制构造函数和复制运算符声明为private,则无法调用复制
         class NoCopyResource
@@ -175,6 +180,7 @@ tags:
       <br> <br/>
       * Q: 什么情况需要深度拷贝
       * A: 对象中存在需要RAII类管理的资源时，基本都需要深度拷贝。因为浅拷贝会造成两个对象中都有指向同一个资源的指针，如果其中一个析构时释放了资源，另一个变成为了野指针。
+    
     ```cpp
         //这里用一个自定义string类做例子，资源类流程都类似
         //资源类
@@ -261,6 +267,7 @@ tags:
     * ### 引用计数，deleter
       * Q: 什么是deleter？
       * A: 我们使用shared_ptr等引用计数器时，当引用次数为0时默认行为是删除所指向资源，但是有些时候我们想要的是其他行为，比如mutex类我们想要的行为是unlock当引用计数为0的时候。 这个时候就需要使用deleter。shared_ptr的第二个参数可以指定函数对象为deleter。
+    
     ```cpp
         class StringManager
         {
@@ -282,6 +289,7 @@ tags:
     * ### 提供原始资源的Raw Pointer
       * Q: 为什么需要提供Raw Pointer
       * A: 虽然使用RAII的目的是隔绝用户和原始资源，但是现代API的设计避免不了通过RAII访问原始资源的需求。可以通过显式转换和隐式转换来提供Raw Pointer。
+    
     ```cpp
         //auto_ptr和shared_ptr都提供了get()方法
         class StringManager
@@ -326,6 +334,7 @@ tags:
     ```
 
     * ### smart pointer构造时使用独立的分离语句
+    
     ```cpp
         //假设这里有个函数需要如下两个函数
         void UseStringDoSomething(String& str, int nums)
