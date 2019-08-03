@@ -8,17 +8,17 @@ tags:
     - Wwise
 ---
 
-* TOC
-{:toc}
-
+# 前言
+* Q: 本文初衷？
+* 引擎的初始化是所有操作的第一步，Wwise的SoundEngine初始化不复杂，本文不讨论一些自定义的设置，只是```记录初始化的步骤```,让读者可以五分钟完成初始化工作。关于工程头文件和静态库的配置可以参考[这里](https://www.audiokinetic.com/library/edge/?source=SDK&id=goingfurther__builds.html)。在StreamManager步骤涉及到文件流接口的实现，本文采用Wwise提供的默认实现之一```AkFilePackageLowLevelIOBlocking```。文件流部分比较复杂，我会重开文章讨论。
 
 # 初始化顺序
-  1. Memory hook文件
-  2. Memory Manager
-  3. Streaming Manager
-  4. Sound Engine
-  5. Music Engine
-  6. Communication
+  1. [Memory hook](#memoryhook)
+  2. [Memory Manager](#memory-manager)
+  3. [Streaming Manager](#streaming-manager)
+  4. [Sound Engine](#streaming-manager)
+  5. [Music Engine](#music-engine)
+  6. [Communication](#communications)
 
 # MemoryHook
 * 在AkTypes.h文件中有以下extern声明，具体定义自己根据系统和需求实现
@@ -94,7 +94,7 @@ namespace AK
 ```
 
 # Memory Manager
-* 然后最先初始化内存管理
+* 然后最先初始化```内存管理```
 
 ```cpp
 #include <AK/SoundEngine/Common/AkMemoryMgr.h>     //Memory Manager     
@@ -131,7 +131,7 @@ bool FAkAudioDevice::EnsureInitialized()
 * Wwise声音引擎的所有内存访问功能都是通过Ak::MemoryMgr这个接口类。默认的实现封装在AkMemoryMgr.lib中。Ak::MemoryMgr::Init()的申明放在AkModule.h。整个AkMemoryMgr接口可以Override,这里不做讨论。
 
 # Streaming Manager
-  * Wwise官方推荐的集成方式是使用默认的Stream Manager实现，然后实现AkStreamMgrModule.h中的接口。这些接口是Low-Level IO的组成部分。
+  * Wwise官方推荐的集成方式是使用默认的```Stream Manager```实现，然后实现```AkStreamMgrModule.h```中的接口。这些接口是Low-Level IO的组成部分。
 
   * 总结Stream Manager初始化流程为：
     1. 创建StreamMgr对象
@@ -212,7 +212,7 @@ bool FAkAudioDevice::EnsureInitialized()
 	}
 	```
 # Sound Engine
-  * 前两项初始化成功后就可以初始化Sound Engine了
+  * 前两项初始化成功后就可以初始化```Sound Engine```了
 	
 	```cpp
 	#include <AK/SoundEngine/Common/AkSoundEngine.h>                // Sound engine
@@ -288,7 +288,7 @@ bool FAkAudioDevice::EnsureInitialized()
 	}
 	```
 # Music Engine
-  * 如果游戏用到Wwise的互动音乐部分，则需要初始化Music Engine
+  * 如果游戏用到Wwise的互动音乐部分，则需要初始化```Music Engine```
 	
 	```cpp
 	#include <AK/MusicEngine/Common/AkMusicEngine.h>                // Music Engine
@@ -334,7 +334,7 @@ bool FAkAudioDevice::EnsureInitialized()
 	```
 
 # Communications
-  * 如果你想用Wwise Authoring Application来连接到游戏进行profiling和mixing，你就需要继续初始化communications模块。这是个很好用的Debug模块，建议初始化，但是记得在Release版本中关闭。
+  * 如果你想用Wwise Authoring Application来连接到游戏进行profiling和mixing，你就需要继续初始化```communications```模块。这是个很好用的Debug模块，建议初始化，但是记得在Release版本中关闭。
 
 	```cpp
 	#ifndef AK_OPTIMIZED
@@ -404,7 +404,7 @@ bool FAkAudioDevice::EnsureInitialized()
 	```
   * Wwise提供了一个固定通信端口，两个动态通信端口。固定端口是AkCommSetting::Ports::uDiscoveryBroadcast。动态端口是AkCommSettings::Ports::uCommand,AkCommSettings::Ports::uNotification
 
-  * Wwise提供了Integration Demo代码的Init部分也比较有参考意义。
+  * Wwise提供了```Integration Demo```代码的Init部分也比较有参考意义。
 
 
 
