@@ -12,8 +12,11 @@ tags:
 * TOC
 {:toc}
 
-# RTPC实现SideChain
+# 前言
+* Q: 本文主题
+* 介绍两种最常用的Wwsie Authoring Tools端的侧链压缩方法，之后会更新一些引擎端的侧链压缩方法。
 
+# RTPC实现SideChain
 1. 创建Game Parameter来关联输出电平值。取-48-0dB即可，这里不需要调整插值选项来平滑启动，可在后面步骤调整。
 
     ![](/img/in-post/SideChain&AutoDuckInWwise/SC1.png)
@@ -32,3 +35,6 @@ tags:
 1. Wwise内置的ducking只能用于Bus组，用于bus信号之间的duck。选择任意bus的Auto-Ducking Tab，选择duck对象，可以调节最大压缩音量，fade曲线模式和时间。注意这里volume是被侧链压缩bus的音量，Maximum ducking volume是本bus可以被侧脸衰减的最大值。
 
     ![](/img/in-post/SideChain&AutoDuckInWwise/SC4.png)
+
+# 总结
+* 以上只是Wwise Authoring Tools中最长用到的两种侧链压缩手法，也是官方推荐的方式。配合RTPC和各种效果器链组合可以在引擎端也创造多种的侧链技术。
