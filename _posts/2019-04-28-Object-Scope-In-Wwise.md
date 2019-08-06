@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Wwise中的GameObject集成与使用"
-subtitle: "Learn About Game Object In Wwise"
+title: "Wwise中的GameObject"
+subtitle: "Game Object In Wwise"
 author: "李AA"
 header-img: "img/blog-bg-violin.jpg"
 tags:
@@ -12,31 +12,33 @@ tags:
 * TOC
 {:toc}
 
+# 前言
+* Q:本文讨论重点？
+* 在声音引擎中，几乎所有的声音播放行为都需要与```Game Object```挂钩。Game Object提供各种游戏数据来驱动声音以保证效果的真实。本文总结一些和Game Object相关的常用操作，记录一些接口调用细节。
+
 # Game Object
 * #### Q: 什么是Game Object?
 
 * A: Game Object没有固定的定义，在每款引擎甚至中间件内都有区别。不过总体意思相差不多，可以理解为对象，也就是需要实例化使用的具体类。
 
-* Unity中GameObject被简单抽象为需要放入场景实例化的“东西”。
+* Unity中Game Object被简单抽象为需要放入场景实例化的“东西”。
 
 * UE4则具体化为AActor类及其子类，AActor类也是唯一能够在UWorld类中被Spawned的类型。所以简单来说所有可以被放到level map中的都属于Actor类(大多数情况下都不单是Actor类)。
 
-* 这里有个容易混淆的地方，UE4拥有一个叫做UObject的类。这是一个比较底层的类别，也是AActor的基类。它拥有反射和序列化的一些属性，没有渲染和运动等组件。
-
 * #### Q: Game Object在声音引擎中什么作用？
 
-* A: 对于游戏中每个发声体(Emitter),都需要注册给Wwise。最终每个声音事件的播放参数，在声音引擎中结算时都需要Emitter的各种数据,这里的Emitter就是Game Object。还有一类用来收听声源的收听体(Listener), 他们收集Emitter播放的声音以进行3D结算时需要的数据也得从注册的Game Object上获取。
+* A: 对于游戏中每个```发声体(Emitter)```,都需要注册给Wwise。最终每个声音事件的播放参数，在声音引擎中结算时都需要Emitter的各种数据,这里的Emitter就是Game Object。还有一类用来收听声源的```收听体(Listener)```, 他们收集Emitter播放的声音以进行3D结算时需要的数据也得从注册的Game Object上获取。
 
 # Game Object在Wwise中的集成
 * #### Q: AkGameObjectID是什么?
-* A: 游戏引擎传给声音引擎表示game object的唯一标识符，无符号64位整型。
+* A: 游戏引擎传给声音引擎表示game object的唯一标识符，```无符号64位整型```。
 
 ```cpp
 //AkTypes.h中有定义
 typedef unsigned __int64	AkUInt64;
 ```
 
-* #### Q: 怎么注册game object?
+* #### Q: 怎么```注册```game object?
 
 ```cpp 
 //ID为uint64_t
@@ -53,7 +55,7 @@ if(result_character == AK_Success){...}
 (...)
 ```
 
-* #### Q: 怎么注销game object?
+* #### Q: 怎么```注销```game object?
 
 ```cpp
 AK::SoundEngine::UnregisterGameObj(car);
@@ -129,7 +131,7 @@ void FAkAudioDevice::UnregisterComponent(...)
 }
 ```
 
-* #### Q: 组件(AkComponent)怎么作为game object注册
+* #### Q: ```组件(AkComponent)```怎么作为game object注册
 
 ```cpp
 #include <AkAudioDevice.h>
@@ -223,7 +225,7 @@ AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 }
 ```
 
-2. ##### 发声点位置和朝向
+2. ##### 发声点```位置```和```朝向```
 
 ```cpp
 //和Event相关的接口
@@ -279,7 +281,8 @@ void FAkAudioDevice::RegisterComponent(...)
 	...
 }
 ```
-3. ##### Game Sync类数据(State, Switch,RTPC)
+3. ##### ```Game Sync```类数据(State, Switch,RTPC)
+
 ```cpp
 AKRESULT FAkAudioDevice::SetSwitch(...)
 {
@@ -319,7 +322,9 @@ AKRESULT FAkAudioDevice::SetRTPCValue(...)
 	...
 }
 ```
+
 4. ##### 空间类DSP效果器所需数据
+
 ```cpp
 AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
 {
@@ -340,7 +345,9 @@ void FAkAudioDevice::RegisterSpatialAudioEmitter()
 	...
 }
 ```
-5. ##### 声笼(Obstruction)和声障(Occlusion)计算所需数据
+
+5. ##### ```声笼(Obstruction)```和```声障(Occlusion)```计算所需数据
+
 ```cpp
 void UAkComponent::UpdateOcclusionObstruction()
 { ObstructionService.UpdateObstructionOcclusion
