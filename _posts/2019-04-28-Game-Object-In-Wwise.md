@@ -211,7 +211,7 @@ AkGameObjectID UAkComponent::GetAkGameObjectID() const
 # 依赖Game Object数据的一些接口
 * #### Q: 哪些声音数据结算依赖于game object？
 
-1. ##### Audio Object相关联的所有偏置量(offset)
+* ##### Audio Object相关联的所有偏置量(offset)
 
 ```cpp
 AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
@@ -225,7 +225,7 @@ AKRESULT FAkAudioDevice::SetGameObjectOutputBusVolume(...)
 }
 ```
 
-2. ##### 发声点```位置```和```朝向```
+* ##### 发声点```位置```和```朝向```
 
 ```cpp
 //和Event相关的接口
@@ -281,7 +281,7 @@ void FAkAudioDevice::RegisterComponent(...)
 	...
 }
 ```
-3. ##### ```Game Sync```类数据(State, Switch,RTPC)
+* ##### ```Game Sync```类数据(State, Switch,RTPC)
 
 ```cpp
 AKRESULT FAkAudioDevice::SetSwitch(...)
@@ -323,7 +323,7 @@ AKRESULT FAkAudioDevice::SetRTPCValue(...)
 }
 ```
 
-4. ##### 空间类DSP效果器所需数据
+* ##### 空间类DSP效果器所需数据
 
 ```cpp
 AKRESULT FAkAudioDevice::SetAttenuationScalingFactor(...)
@@ -346,7 +346,7 @@ void FAkAudioDevice::RegisterSpatialAudioEmitter()
 }
 ```
 
-5. ##### ```声笼(Obstruction)```和```声障(Occlusion)```计算所需数据
+* ##### ```声笼(Obstruction)```和```声障(Occlusion)```计算所需数据
 
 ```cpp
 void UAkComponent::UpdateOcclusionObstruction()
