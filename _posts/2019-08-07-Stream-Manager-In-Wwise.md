@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Wwisez中的流管理系统"
+title: "Wwise中的流管理系统"
 subtitle: "Stream Manager In Wwise"
 author: "李AA"
 header-img: "img/blog-bg-flower.jpg"
