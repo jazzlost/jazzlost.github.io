@@ -3,7 +3,7 @@ layout: post
 title: "Wwisez中的流管理系统"
 subtitle: "Stream Manager In Wwise"
 author: "李AA"
-header-img: "img/post-bg-music-header_745px.jpg"
+header-img: "img/blog-bg-flower.jpg"
 tags:
     - Wwise
 ---
