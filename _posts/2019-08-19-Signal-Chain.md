@@ -3,7 +3,7 @@ layout: post
 title: "音频系统信号流"
 subtitle: "Signal Chains Of Three Audio System"
 author: "李AA"
-header-img: "img/blog-bg-grass.jpeg"
+header-img: "img/blog-bg-deep.jpeg"
 tags:
     - Wwise
     - FMOD
