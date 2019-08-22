@@ -3,6 +3,7 @@ layout: post
 title: "Unreal基于对象的语音系统"
 subtitle: "Dialogue System In Unreal"
 author: "李AA"
+published: true
 header-img: "img/blog-bg-city.jpg"
 tags:
     - Unreal
