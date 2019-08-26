@@ -4,7 +4,7 @@ title: "FPS项目声音设计框架"
 subtitle: "Sound Framework Of A FPS Project"
 author: "李AA"
 header-img: "img/blog-bg-windows.jpeg"
-published: false
+published: true
 tags:
     - Wwise
     - Unreal
