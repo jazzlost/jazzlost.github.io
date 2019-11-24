@@ -303,9 +303,9 @@ Program
 7. 可以通过Class Manager创建类在模块中，也可以手动创建
 
     ![](/img/in-post/UBT/MyModuleActor.png)
-    
+
     * 手动创建要记得添加 模块名_API的宏 供UBT把此类Build进相应模块dll中
-    
+
     ```cpp
     UCLASS()
     class MYMODULE_API AMyModuleActor : public AActor
@@ -315,7 +315,7 @@ Program
     public:	
     	// Sets default values for this actor's properties
     	AMyModuleActor();
-    
+
     };
     ```
 
