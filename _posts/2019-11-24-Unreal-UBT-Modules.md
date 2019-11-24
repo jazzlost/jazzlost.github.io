@@ -295,9 +295,9 @@ Program
 
 6. 重新生成工程，可以看到模块已经加载，模块也被编译为独立dll
 
-![](/img/in-post/UBT/MyModule.png)
-
-![](/img/in-post/UBT/MyModuleDll.png)
+    ![](/img/in-post/UBT/MyModule.png)
+    
+    ![](/img/in-post/UBT/MyModuleDll.png)
 
 
 7. 可以通过Class Manager创建类在模块中，也可以手动创建
