@@ -217,81 +217,81 @@ Program
 
 2. 文件夹内创建Private/Public文件夹与MyModule.Build.cs文件，Private里创建MyModulea.cpp，Publi里创建MyModule.h
 
-![](/img/in-post/UBT/MyModuleFiles.png)
+    ![](/img/in-post/UBT/MyModuleFiles.png)
 
-```cpp
-//MyModule.h
-#pragma once
-#include "CoreMinimal.h"
-```
+    ```cpp
+    //MyModule.h
+    #pragma once
+    #include "CoreMinimal.h"
+    ```
 
-```cpp
-//MyModule.cpp
-#include "MyModule.h"
-#include "Modules/ModuleManager.h"
-//如果模块内没有Gameplay代码，则用IMPLEMENT_MODULE宏
-IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, MyModule, "MyModule");
-```
+    ```cpp
+    //MyModule.cpp
+    #include "MyModule.h"
+    #include "Modules/ModuleManager.h"
+    //如果模块内没有Gameplay代码，则用IMPLEMENT_MODULE宏
+    IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, MyModule, "MyModule");
+    ```
 3. MyModule.Build.cs中添加依赖模块以及外部可读取的文件
 
-```c#
-//MyModule.Build.cs
-using UnrealBuildTool;
-public class MyModule : ModuleRules
-{
-    public MyModule(ReadOnlyTargetRules Target) : base(Target)
+    ```c#
+    //MyModule.Build.cs
+    using UnrealBuildTool;
+    public class MyModule : ModuleRules
     {
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        public MyModule(ReadOnlyTargetRules Target) : base(Target)
+        {
+            PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] {"Core", "CoreUObject", "Engine" "InputCore" });
+            PublicDependencyModuleNames.AddRange(new string[] {"Core", "CoreUObject", "Engine"  "InputCore" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
+            PrivateDependencyModuleNames.AddRange(new string[] { });
 
+        }
     }
-}
-```
+    ```
 4. uproject文件中添加模块的项目设置
 
-```shell
-{
-	"FileVersion": 3,
-	"EngineAssociation": "4.21",
-	"Category": "",
-	"Description": "",
-	"Modules": [
-		{
-			"Name": "CustomModule",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "MyModule",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
-		}
-	]
-}
-```
+    ```shell
+    {
+    	"FileVersion": 3,
+    	"EngineAssociation": "4.21",
+    	"Category": "",
+    	"Description": "",
+    	"Modules": [
+    		{
+    			"Name": "CustomModule",
+    			"Type": "Runtime",
+    			"LoadingPhase": "Default"
+    		},
+    		{
+    			"Name": "MyModule",
+    			"Type": "Runtime",
+    			"LoadingPhase": "Default",
+    			"AdditionalDependencies": [
+    				"Engine"
+    			]
+    		}
+    	]
+    }
+    ```
 
 5. 项目的.Target.cs与Editor.Target.cs文件中加上模块名字
 
-```c#
-//.Target.cs
-using UnrealBuildTool;
-using System.Collections.Generic;
-public class CustomModuleTarget : TargetRules
-{
-	public CustomModuleTarget(TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Game;
-		ExtraModuleNames.AddRange( new string[] { "CustomModule" } )    ;
-		ExtraModuleNames.AddRange( new string[] { "MyModule" } );
+    ```c#
+    //.Target.cs
+    using UnrealBuildTool;
+    using System.Collections.Generic;
+    public class CustomModuleTarget : TargetRules
+    {
+    	public CustomModuleTarget(TargetInfo Target) : base(Target)
+    	{
+    		Type = TargetType.Game;
+    		ExtraModuleNames.AddRange( new string[] { "CustomModule" } )    ;
+    		ExtraModuleNames.AddRange( new string[] { "MyModule" } );
+        }
     }
-}
-```
+    ```
 
 6. 重新生成工程，可以看到模块已经加载，模块也被编译为独立dll
 
@@ -302,22 +302,22 @@ public class CustomModuleTarget : TargetRules
 
 7. 可以通过Class Manager创建类在模块中，也可以手动创建
 
-![](/img/in-post/UBT/MyModuleActor.png)
-
-* 手动创建要记得添加 模块名_API的宏 供UBT把此类Build进相应模块dll中
-
-```cpp
-UCLASS()
-class MYMODULE_API AMyModuleActor : public AActor
-{
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AMyModuleActor();
-
-};
-```
+    ![](/img/in-post/UBT/MyModuleActor.png)
+    
+    * 手动创建要记得添加 模块名_API的宏 供UBT把此类Build进相应模块dll中
+    
+    ```cpp
+    UCLASS()
+    class MYMODULE_API AMyModuleActor : public AActor
+    {
+    	GENERATED_BODY()
+    
+    public:	
+    	// Sets default values for this actor's properties
+    	AMyModuleActor();
+    
+    };
+    ```
 
 # 参考
 
