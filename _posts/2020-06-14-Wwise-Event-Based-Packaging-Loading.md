@@ -11,9 +11,6 @@ tags:
     - Memory
 ---
 
-* TOC
-{:toc}
-
 # 前言
 * ### EBP的设计把资源的加载/卸载控制权完全交给了UE。对于音效师来说，工作流中可以忽略对于资源加载问题的考虑，把重心转移到Event的结构与逻辑设计上。对于程序来说，因为音效资源也从bnk被包装成了uasset，资源的加载/卸载管理也统一到了UE的资源管理流程中，维护音效资源和维护其他资源没有了任何差别，可以使用相同的维护逻辑。
 
@@ -30,11 +27,13 @@ tags:
 
 
 # EBP相关类的关系
+
 * ### EBP中的类可以大概分为```UE资产类```/```数据类```/```行为类```
 
 ![](/img/in-post/EBP/ClassView.png)
 
 # EBP资产加载
+
 * ### 所有EBP相关资产的加载，现在都被拆分为了加载```Data```部分与加载```Media```部分，所以下面的加载流程都可以按这个思路来理解
 
 * ### 重构后的集成把```行为```与```数据```做了更明显的区分，数据加载卸载操作都封装到了```AkIntegrationBehavior```
@@ -176,6 +175,7 @@ void AkEventBasedIntegrationBehavior::AkAudioEvent_Load(UAkAudioEvent* AkAudioEv
 	}
 }
 ```
+
 2. ### UAkAudioType及子类的Load中会执行平台关联的资产验证与加载，这里开始进入Data的加载阶段
 
 ```cpp
@@ -259,6 +259,7 @@ AKRESULT AkEventBasedIntegrationBehavior::AkAssetData_Load(UAkAssetData* AkAsset
 #endif
 }
 ```
+
 ```CPP
 /*UAkAssetDataWithMedia的加载主要是加载关联的Media资源*/
 AKRESULT UAkAssetDataWithMedia::Load()
@@ -490,7 +491,9 @@ void UAkMediaAsset::loadMedia()
 ```
 
 ## UAkGroupValue
+
 1. ### UAkGroupValue的加载主要是广播代理，将资产地址传给已经绑定的UAkAudioEvent，进行Switch关联资产的加载
+
 ```cpp
 void UAkGroupValue::PostLoad()
 {
@@ -531,6 +534,7 @@ void UAkAssetDataSwitchContainer::loadSwitchValue(const FSoftObjectPath& path, U
 ```
 
 ## UAkAudioBank
+
 1. ### 现在的UAkAudioBank就像没有Event信息的UAkAudioEvent，整个加载流程和UAkAudioEvent没有区别，可以看到```GroupInAudioBank```命令也只是填充UAkAudioEvent的RequiredBank数据以支持legency load/unload方式。
 
 ```cpp
@@ -572,12 +576,12 @@ void FAssetTypeActions_AkAudioEvent::GroupIntoSoundBank(TArray<TWeakObjectPtr<UA
 ```
 
 # 卸载流程
+
 * ### 卸载流程基本按照 ```资源卸载检查```/```内存释放```/```引用解除```步骤进行
 
 ![](/img/in-post/EBP/Unload.png)
  
 ```cpp
-
 /*UAkAssetData负责释放对应Data的内存，解除引用*/
 AKRESULT UAkAssetData::Unload()
 {
@@ -624,6 +628,7 @@ void UAkAssetDataSwitchContainer::unloadSwitchContainerMedia(UAkAssetDataSwitchC
 	}
 }
 ```
+
 ```cpp
 /*本地化资源的卸载，找到关联的AssetData执行Unload操作*/
 void UAkAudioEvent::unloadLocalizedData()
