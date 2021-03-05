@@ -4,7 +4,7 @@ title: "关于Wwise插件开发"
 subtitle: "Procedure of Wwise Plugin Development"
 author: "李AA"
 published: true
-header-img: "img/blog-bg-mass.jpg"
+header-img: "img/post-bg-rock-climbing.jpg"
 tags:
     - C++
     - Wwise
