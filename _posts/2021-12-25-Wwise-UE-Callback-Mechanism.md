@@ -52,7 +52,7 @@ tags:
 - [总结](#总结)
 
 # 前言
-去年写过一篇对于[Wwise-UE回调流程的简介与测试](https://zhuanlan.zhihu.com/p/109102851)。本文想要继续讨论一些使用与实现上的细节, 同时对自定义扩展进行讨论。
+之前写过一篇[Wwise-UE中的回调设计01](https://zhuanlan.zhihu.com/p/109102851)。本文想要继续讨论一些使用与实现上的细节, 同时对自定义扩展进行一些讨论。
 
 # Object
 ![](WwiseCallback/Object.png)
