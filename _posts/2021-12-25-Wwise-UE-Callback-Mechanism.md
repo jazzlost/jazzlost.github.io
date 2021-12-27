@@ -136,6 +136,8 @@ bool FAkAudioDevice::EnsureInitialized()
 * Package的哈希方式，确保唯一性就好了
 
 ```cpp
+/** AkComponentCallbackManager.cpp **/
+
     uint32 FAkComponentCallbackManager::GetKeyHash(void* Key)
     {
     	return GetTypeHash(Key);
@@ -147,7 +149,7 @@ bool FAkAudioDevice::EnsureInitialized()
     }
 ```
 ## Bank
-* bank的回调没有动态控制的功能，所以保持为简单的```CallbackInfo```
+* bank的回调不需要动态控制的功能，所以保持为简单的```CallbackInfo```
 
 ## 1. IAkBankCallbackInfo
 * CallbackInfo基类, 里面有关联bank的指针
@@ -158,7 +160,7 @@ bool FAkAudioDevice::EnsureInitialized()
 ```
 
 ## 2. FAkBankFunctionPtrCallbackInfo
-* CallbackInfo子类, 增加了回调函数与cookie缓存, 因为回调接口类没有进行UE Wrap，所以建议作为AkAudio模块内的回调callbackinfo
+* CallbackInfo子类, 增加了```回调函数```与```cookie```缓存, 因为回调接口类没有进行UE Wrap，所以建议作为AkAudio模块内的回调callbackinfo
 
 ```cpp
     /** 回调函数 */
@@ -271,7 +273,7 @@ AKRESULT FAkAudioDevice::LoadBank(
 	FWaitEndBankAction* LoadBankLatentAction
 )
 ```
-* UnloadBank和LoadBank没有区别，三个接口对应三种CallbackInfo
+* ```UnloadBank```和```LoadBank```没有区别，三个接口对应三种CallbackInfo
 
 
 ## 2. Make Package
@@ -280,21 +282,16 @@ AKRESULT FAkAudioDevice::LoadBank(
 * CallbackManager中为不同Package重载了```CreateCallbackPackage```接口
 
 ```cpp
-IAkUserEventCallbackPackage* FAkComponentCallbackManager::CreateCallbackPackage(AkCallbackFunc in_cbFunc, void* in_Cookie, uint32 in_Flags, AkGameObjectID in_gameObjID)
-{
-	/** Cookie值哈希用来创建Package */
-	uint32 KeyHash = GetKeyHash(in_Cookie);
-	auto pPackage = new FAkFunctionPtrEventCallbackPackage(in_cbFunc, in_Cookie, in_Flags, KeyHash);
-	if (pPackage)
-	{
-		FScopeLock Lock(&CriticalSection);
-		/**  */
-		GameObjectToPackagesMap.FindOrAdd(in_gameObjID).Add(pPackage);
-		UserCookieHashToPackageMap.Add(KeyHash, pPackage);
-	}
+/** AkComponentCallbackManager.h **/
 
-	return pPackage;
-}
+	/** FAkFunctionPtrEventCallbackPackage类型 */
+	IAkUserEventCallbackPackage* CreateCallbackPackage(AkCallbackFunc in_cbFunc, void* in_Cookie, uint32 in_Flags, AkGameObjectID in_gameObjID);
+
+	/** FAkBlueprintDelegateEventCallbackPackage类型 */
+	IAkUserEventCallbackPackage* CreateCallbackPackage(FOnAkPostEventCallback BlueprintCallback, uint32 in_Flags, AkGameObjectID in_gameObjID);
+
+	/** FAkLatentActionEventCallbackPackage类型 */
+	IAkUserEventCallbackPackage* CreateCallbackPackage(FWaitEndOfEventAction* LatentAction, AkGameObjectID in_gameObjID);
 
 ```
 
@@ -360,6 +357,8 @@ IAkUserEventCallbackPackage* FAkComponentCallbackManager::CreateCallbackPackage(
 * bank因为没用用Package的形式, 只是简单的CallbackInfo所以BankManager中没有实现Create接口, 而是在触发接口中简单粗暴的new了对应的类型
 
 ```cpp
+/** AkAudioDevice.cpp **/
+
 
 /** FAkBankFunctionPtrCallbackInfo类型 */
 AKRESULT FAkAudioDevice::LoadBank(
@@ -637,7 +636,7 @@ void FAkComponentCallbackManager::AkComponentCallback(AkCallbackType in_eType, A
 		bool deletePackage = false;
 
 		{
-			FScopeLock Lock(&Instance->CriticalSection);、
+			FScopeLock Lock(&Instance->CriticalSection);
 			/** 找到GameObjectID关联的PackageSet */
 			auto pPackageSet = Instance->GameObjectToPackagesMap.Find(gameObjID);
 			/** 如果是事件结束回调就从PackageSet里面清理掉这个Package */
@@ -944,7 +943,7 @@ private:
 ```
 
 ### 3. 重载CreatePackage
-* AkCallbackManager中重载CreateCallbackPackage接口
+* ```AkCallbackManager```中重载```CreateCallbackPackage```接口
 
 ```cpp
 /** AkComponentCallbackManager.cpp **/
@@ -1011,7 +1010,7 @@ void FCustomCallbackPackage::HandleAction(AkCallbackType in_eType, AkCallbackInf
 	}
 ```
 
-* 代理类型的CancelCallback把代理清理了就好了
+* 代理类型的```CancelCallback```把代理清理了就好了
 
 ```cpp
 void FCustomCallbackPackage::CancelCallback()
