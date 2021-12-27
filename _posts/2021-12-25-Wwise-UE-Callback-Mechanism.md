@@ -4,7 +4,7 @@ title: "Wwise-UE中的回调设计"
 subtitle: "Design of Callback Mechanism in Wwise-UE Integration"
 author: "李AA"
 published: true
-header-img: "img/post-bg-rock-climbing.jpg"
+header-img: "img/blog-seashore.jpg"
 tags:
     - C++
     - Wwise
@@ -37,7 +37,7 @@ tags:
 	- [2. Make Package](#2-make-package)
 		- [Event](#event-2)
 		- [bank](#bank-2)
-		- [```GameObjectToPackagesMap``` & ```UserCookieHashToPackageMap```](#gameobjecttopackagesmap--usercookiehashtopackagemap)
+		- [GameObjectToPackagesMap & UserCookieHashToPackageMap](#gameobjecttopackagesmap--usercookiehashtopackagemap)
 	- [3. Send To SoundEngine](#3-send-to-soundengine)
 		- [静态回调函数接口](#静态回调函数接口)
 	- [4. Handle Package](#4-handle-package)
@@ -89,7 +89,7 @@ bool FAkAudioDevice::EnsureInitialized()
 # Package
 
 ## Event
-* Event的回调被设计为Package的形式主要原因是需要支持回调的动态控制，可以runtime的注册与取消
+* Event的回调被设计为Package的形式主要原因是需要```支持回调的动态控制```，可以runtime的注册与取消
 
 ## 1. IAkUserEventCallbackPackage
 * Package基类，其中有两个最重要属性
@@ -113,7 +113,7 @@ bool FAkAudioDevice::EnsureInitialized()
 ```
 
 ## 3. FAkBlueprintDelegateEventCallbackPackage
-* Package子类, 增加了动态多播代理，可以绑定模块外和蓝图层的回调函数
+* Package子类, 增加了动态多播代理，可以绑定```模块外和蓝图层```的回调函数
 
 ```cpp
     /** 多播代理 */
@@ -147,7 +147,7 @@ bool FAkAudioDevice::EnsureInitialized()
     }
 ```
 ## Bank
-* bank的回调没有动态控制的功能，所以保持为简单的CallbackInfo
+* bank的回调没有动态控制的功能，所以保持为简单的```CallbackInfo```
 
 ## 1. IAkBankCallbackInfo
 * CallbackInfo基类, 里面有关联bank的指针
@@ -168,7 +168,7 @@ bool FAkAudioDevice::EnsureInitialized()
 ```
 
 ## 3. FAkBankBlueprintDelegateCallbackInfo
-* Callbackinfo子类, 增加了动态多播代理，可以绑定模块外和蓝图层的回调函数
+* Callbackinfo子类, 增加了动态多播代理，可以绑定```模块外和蓝图层```的回调函数
 
 ```cpp
     /** 多播代理 */
@@ -194,7 +194,8 @@ bool FAkAudioDevice::EnsureInitialized()
 
 ### Event
 
-* 三种不同的PostEvent接口创建不同的Package类型
+* 三种不同的PostEvent接口创建```不同的Package类型```
+
 ```cpp
 /** AkAudioDevice.cpp **/
 
@@ -243,7 +244,7 @@ AkPlayingID FAkAudioDevice::PostEventLatentAction(
 ```
 
 ### Bank
-* 三种不同的LoadBank接口创建不同的CallbackInfo类型
+* 三种不同的LoadBank接口创建```不同的CallbackInfo类型```
 
 ```cpp
 
@@ -435,9 +436,9 @@ AKRESULT FAkAudioDevice::LoadBank(
 }
 ```
 
-### ```GameObjectToPackagesMap``` & ```UserCookieHashToPackageMap```
+### GameObjectToPackagesMap & UserCookieHashToPackageMap
 
-* GameObjectToPackagesMap中储存了所有在SoundEngine注册过的GameObject与它们此时还没有处理完的Package的映射关系
+* ```GameObjectToPackagesMap```中储存了所有在SoundEngine注册过的GameObject与它们此时还没有处理完的Package的映射关系
 
 ```cpp
 /** AkComponentCallbackManager.h **/
@@ -478,7 +479,7 @@ void UAkComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FAct
 }
 ```
 
-* UserCookieHashToPackageMap中储存了cookie的哈希值与cookie所在package的映射关系
+* ```UserCookieHashToPackageMap```中储存了cookie的哈希值与cookie所在package的映射关系
 
 ```cpp
 /** AkComponentCallbackManager.h **/
@@ -519,7 +520,7 @@ void FAkComponentCallbackManager::CancelKeyHash(uint32 HashToCancel)
 ## 3. Send To SoundEngine
 
 ### 静态回调函数接口
-* Event与Bank的CallbakcManager中都有一个静态的回调接口，这个接口也是传给SoundEngine进行回调的公共接口, SoundEngine回调后集成相关的所有回调处理都从这里开始
+* Event与Bank的CallbakcManager中都有一个```静态的回调接口```，这个接口也是传给SoundEngine进行回调的公共接口, SoundEngine回调后集成相关的所有回调处理都从这里开始
 
 ```cpp
 /** AkComponentCallbackManager.h **/
@@ -537,7 +538,7 @@ void FAkComponentCallbackManager::CancelKeyHash(uint32 HashToCancel)
 	);
 ```
 
-* Package最终在这个模板函数中生成，作为cookie发送给SoundEngine
+* Package最终在这个模板函数中生成，作为```cookie```发送给SoundEngine
 
 ```cpp
 template<typename FCreateCallbackPackage>
@@ -619,7 +620,7 @@ AKRESULT FAkAudioDevice::LoadBank(
 
 ## 4. Handle Package
 
-* SoundEngine回调的第一站就是静态回调函数接口
+* SoundEngine回调的第一站就是```静态回调函数接口```
 
 ```cpp
 /** AkComponentCallbackManager.cpp **/
@@ -697,7 +698,7 @@ void FAkBankManager::BankLoadCallback(
 }
 ```
 
-* 每种Package类型都需要实现自己的HandleAction接口，来处理自定义的回调流程
+* 每种Package类型都需要实现自己的```HandleAction```接口，来处理自定义的回调流程
 
 ```cpp
 /** AkComponentCallbackManager.cpp **/
@@ -764,7 +765,7 @@ void FAkLatentActionEventCallbackPackage::HandleAction(AkCallbackType in_eType, 
 }
 ```
 
-* 每种Bank的CallbackInfo中也要实现HandleAction接口
+* 每种Bank的CallbackInfo中也要实现```HandleAction```接口
 
 ```cpp
 /** AkBankManager.cpp **/
@@ -805,7 +806,7 @@ void FAkBankBlueprintDelegateCallbackInfo::HandleAction(AkUInt32 BankID, const v
 ```
 
 ### AkCallbackInfoPool的作用
-* AkCallbackInfoPool作为一个对象池, 主要是维护了一个EAkCallbackType与UAkCallbackInfo的对象池，目的是保证每个EAkCallbackType类型的UAkCallbackInfo对象只有一个，每次广播用完后都重置可以重复利用
+* ```AkCallbackInfoPool```作为一个对象池, 主要是维护了一个```EAkCallbackType```与```UAkCallbackInfo```的对象池，目的是保证每个EAkCallbackType类型的UAkCallbackInfo对象只有一个，每次广播用完后都重置可以重复利用
 
 ```cpp
 /** AkCallbackInfoPool.h**/
@@ -916,7 +917,7 @@ DECLARE_DYNAMIC_DELEGATE_FourParams(FCustomPostEventCallback, EAkCallbackType, C
 ```
 
 ### 2. 创建Package子类
-* 创建IAkUserEventCallbackPackage子类Pakcage
+* 创建```IAkUserEventCallbackPackage```子类Pakcage
 
 ```cpp
 class FCustomCallbackPackage : public IAkUserEventCallbackPackage
@@ -968,7 +969,7 @@ IAkUserEventCallbackPackage* FAkComponentCallbackManager::CreateCallbackPackage(
 ```
 
 ### 4. 实现HandleAction与CancelCalback
-* 代理类型的回调需要在HandleAction中进行GamePlay线程的异步处理
+* 代理类型的回调需要在```HandleAction```中进行GamePlay线程的```异步处理```
 
 ```cpp
 void FCustomCallbackPackage::HandleAction(AkCallbackType in_eType, AkCallbackInfo* in_pCallbackInfo)
