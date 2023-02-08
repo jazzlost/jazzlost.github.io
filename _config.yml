@@ -83,7 +83,7 @@ ga_domain: auto
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "jazzlost <br> 区块链 量化 链上数据分析 <br> 前游戏音频开发 <br> blockchain research <br>on-chain data analysis <br>quant <br> former Game Audio Programmer"
+sidebar-about-description: "jazzlost <br> 区块链 量化 链上数据分析 <br> 前游戏音频开发 <br> Blockchain Research <br>On-chain Data Analysis <br>Quant <br> Former Game Audio Programmer"
 sidebar-avatar: "/img/blog-head.jpg"     # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
