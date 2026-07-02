@@ -10,18 +10,14 @@ const tags = getAllTags(posts);
 ---
 
 <BaseLayout>
-  <section class="container home-layout">
-    <div class="home-main">
-      <div class="section-header">
-        <div>
-          <p class="eyebrow">Latest</p>
-          <h2>最新文章</h2>
-        </div>
-        <a href="/archive/">View archive</a>
-      </div>
-      <div class="post-grid">
-        {featuredPosts.map((post) => <PostCard post={post} />)}
-      </div>
+  <section class="container hero">
+    <div>
+      <p class="eyebrow">Research notes</p>
+      <h1>{site.title}</h1>
+      <p class="lead">{site.description}</p>
+      <ul class="topic-list" aria-label="Topics">
+        {site.topics.map((topic) => <li><span class="pill">{topic}</span></li>)}
+      </ul>
     </div>
 
     <aside class="sidebar" aria-label="Blog profile and tags">
@@ -35,5 +31,18 @@ const tags = getAllTags(posts);
         {site.sidebarLines.map((line) => <p>{line}</p>)}
       </div>
     </aside>
+  </section>
+
+  <section class="container section">
+    <div class="section-header">
+      <div>
+        <p class="eyebrow">Latest</p>
+        <h2>最新文章</h2>
+      </div>
+      <a href="/archive/">View archive</a>
+    </div>
+    <div class="post-grid">
+      {featuredPosts.map((post) => <PostCard post={post} />)}
+    </div>
   </section>
 </BaseLayout>
