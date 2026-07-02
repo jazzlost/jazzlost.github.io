@@ -37,6 +37,9 @@ Use these settings:
 The legacy GitHub Pages `CNAME` file is intentionally removed. Cloudflare Pages
 is the production source of truth for custom-domain configuration.
 
+See `docs/cloudflare-pages-deployment.md` for the preview validation, custom
+domain cutover, and rollback checklist.
+
 ## Content
 
 Posts live in `src/content/blog`. Each post uses this front matter shape:
