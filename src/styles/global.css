@@ -243,13 +243,11 @@ h3 {
 
 .sidebar {
   align-self: start;
-  background: #000;
-  border-radius: 8px;
-  color: #f8f4ee;
+  color: var(--ink);
   display: grid;
   gap: clamp(1.5rem, 4vw, 3.5rem);
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
-  padding: clamp(1.25rem, 2.6vw, 2rem);
+  padding: 0;
 }
 
 .sidebar-tags-block {
@@ -261,25 +259,25 @@ h3 {
 }
 
 .sidebar .tag {
-  border-color: rgb(248 244 238 / 86%);
-  color: #f8f4ee;
+  border-color: color-mix(in srgb, var(--line) 84%, var(--ink));
+  color: var(--muted);
 }
 
 .sidebar .tag:hover {
-  background: #fff;
-  border-color: #fff;
-  color: #000;
+  background: var(--paper);
+  border-color: rgb(15 118 110 / 45%);
+  color: var(--accent-strong);
 }
 
 .sidebar hr {
   border: 0;
-  border-top: 1px solid rgb(248 244 238 / 78%);
+  border-top: 1px solid var(--line);
   margin: 1.85rem 0 2.7rem;
 }
 
 .sidebar-profile {
   align-items: center;
-  border-left: 1px solid rgb(248 244 238 / 28%);
+  border-left: 1px solid var(--line);
   display: grid;
   gap: 1.2rem;
   grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
@@ -297,14 +295,14 @@ h3 {
 }
 
 .sidebar-bio h2 {
-  color: #f8f4ee;
+  color: var(--ink);
   font-size: 1.08rem;
   font-weight: 500;
   margin: 0 0 0.35rem;
 }
 
 .sidebar-bio p {
-  color: #f8f4ee;
+  color: var(--ink);
   font-size: 1.02rem;
   line-height: 1.35;
   margin: 0.18rem 0;
@@ -523,7 +521,7 @@ h3 {
 
   .sidebar-profile {
     border-left: 0;
-    border-top: 1px solid rgb(248 244 238 / 28%);
+    border-top: 1px solid var(--line);
     padding-left: 0;
     padding-top: 1.45rem;
   }
