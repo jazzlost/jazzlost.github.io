@@ -1,0 +1,56 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+  formatDate,
+  getPostPath,
+  getPublishedPosts,
+  getTagPath,
+  type BlogPost,
+} from '@/lib/posts';
+import { site } from '@/lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: BlogPost };
+const posts = await getPublishedPosts();
+const index = posts.findIndex((item) => item.id === post.id);
+const newer = index > 0 ? posts[index - 1] : undefined;
+const older = index < posts.length - 1 ? posts[index + 1] : undefined;
+const { Content } = await render(post);
+const image = post.data.headerImage ?? site.defaultHeaderImage;
+---
+
+<BaseLayout title={post.data.title} description={post.data.subtitle ?? site.description} image={image}>
+  <article>
+    <header class="container narrow article-header">
+      <p class="eyebrow">{formatDate(post.data.date)} · {post.data.author}</p>
+      <h1>{post.data.title}</h1>
+      {post.data.subtitle && <p class="lead">{post.data.subtitle}</p>}
+      <ul class="tag-list" aria-label="Post tags">
+        {post.data.tags.map((tag) => <li><a class="tag" href={getTagPath(tag)}>{tag}</a></li>)}
+      </ul>
+      <img class="article-hero" src={image} alt="" />
+    </header>
+
+    <div class="container narrow">
+      <div class="prose">
+        <Content />
+      </div>
+      <nav class="post-nav" aria-label="Post navigation">
+        <div>
+          {newer && <a href={getPostPath(newer)}><span class="meta">Newer</span><br />{newer.data.title}</a>}
+        </div>
+        <div>
+          {older && <a href={getPostPath(older)}><span class="meta">Older</span><br />{older.data.title}</a>}
+        </div>
+      </nav>
+    </div>
+  </article>
+</BaseLayout>

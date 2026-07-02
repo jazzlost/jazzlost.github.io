@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Search" description="搜索 jazzlost 博客文章">
+  <section class="container narrow section">
+    <p class="eyebrow">Search</p>
+    <h1>站内搜索</h1>
+    <p class="lead">支持中文、英文、标签和正文内容。构建完成后由 Pagefind 生成静态索引。</p>
+    <div class="search-box" id="search"></div>
+  </section>
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.PagefindUI) {
+        new window.PagefindUI({
+          element: '#search',
+          showSubResults: true,
+          showImages: false,
+          resetStyles: false,
+        });
+      }
+    });
+  </script>
+</BaseLayout>

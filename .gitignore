@@ -1,8 +1,8 @@
-_site
+dist
+.astro
 node_modules
-npm-debug.log
+npm-debug.log*
 .DS_Store
 */.DS_Store
 */*/.DS_Store
-*.sh
 .vscode

@@ -1,0 +1,22 @@
+---
+import type { BlogPost } from '@/lib/posts';
+import { excerpt, formatDate, getPostPath } from '@/lib/posts';
+import { site } from '@/lib/site';
+
+type Props = {
+  post: BlogPost;
+};
+
+const { post } = Astro.props;
+const image = post.data.headerImage ?? site.defaultHeaderImage;
+---
+
+<a class="post-card" href={getPostPath(post)}>
+  <img src={image} alt="" loading="lazy" />
+  <div class="post-card-body">
+    <div class="meta">{formatDate(post.data.date)} · {post.data.author}</div>
+    <h3>{post.data.title}</h3>
+    {post.data.subtitle && <p>{post.data.subtitle}</p>}
+    {!post.data.subtitle && <p>{excerpt(post)}</p>}
+  </div>
+</a>
