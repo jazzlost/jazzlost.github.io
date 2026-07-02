@@ -237,12 +237,23 @@ h3 {
   padding: 1.25rem;
 }
 
+.sidebar-section {
+  padding: 3.2rem 1.25rem 0;
+}
+
 .sidebar {
   align-self: start;
   background: #000;
   border-radius: 8px;
   color: #f8f4ee;
-  padding: 1.2rem;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+  padding: clamp(1.25rem, 2.6vw, 2rem);
+}
+
+.sidebar-tags-block {
+  min-width: 0;
 }
 
 .sidebar-tags {
@@ -266,14 +277,23 @@ h3 {
   margin: 1.85rem 0 2.7rem;
 }
 
+.sidebar-profile {
+  align-items: center;
+  border-left: 1px solid rgb(248 244 238 / 28%);
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: minmax(132px, 180px) minmax(0, 1fr);
+  padding-left: clamp(1.2rem, 3vw, 2.2rem);
+}
+
 .sidebar-image {
   border-radius: 4px;
   display: block;
-  width: min(100%, 220px);
+  width: 100%;
 }
 
 .sidebar-bio {
-  margin-top: 1.45rem;
+  margin-top: 0;
 }
 
 .sidebar-bio h2 {
@@ -492,6 +512,21 @@ h3 {
     align-items: start;
     flex-direction: column;
   }
+
+  .sidebar-section {
+    padding-top: 2.2rem;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-profile {
+    border-left: 0;
+    border-top: 1px solid rgb(248 244 238 / 28%);
+    padding-left: 0;
+    padding-top: 1.45rem;
+  }
 }
 
 @media (max-width: 560px) {
@@ -513,5 +548,14 @@ h3 {
 
   .hero-copy p {
     margin-top: 0.75rem;
+  }
+
+  .sidebar-profile {
+    align-items: start;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-image {
+    max-width: 220px;
   }
 }

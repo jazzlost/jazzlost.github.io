@@ -10,25 +10,19 @@ const tags = getAllTags(posts);
 ---
 
 <BaseLayout>
-  <section class="container hero">
-    <div>
-      <p class="eyebrow">Research notes</p>
-      <h1>{site.title}</h1>
-      <p class="lead">{site.description}</p>
-      <ul class="topic-list" aria-label="Topics">
-        {site.topics.map((topic) => <li><span class="pill">{topic}</span></li>)}
-      </ul>
-    </div>
-
+  <section class="container sidebar-section">
     <aside class="sidebar" aria-label="Blog profile and tags">
-      <ul class="tag-list sidebar-tags" aria-label="Tags">
-        {tags.map((tag) => <li><a class="tag" href={getTagPath(tag.name)}>{tag.name}</a></li>)}
-      </ul>
-      <hr />
-      <img class="sidebar-image" src={site.sidebarImage} alt="" loading="lazy" />
-      <div class="sidebar-bio">
-        <h2>{site.title}</h2>
-        {site.sidebarLines.map((line) => <p>{line}</p>)}
+      <div class="sidebar-tags-block">
+        <ul class="tag-list sidebar-tags" aria-label="Tags">
+          {tags.map((tag) => <li><a class="tag" href={getTagPath(tag.name)}>{tag.name}</a></li>)}
+        </ul>
+      </div>
+      <div class="sidebar-profile">
+        <img class="sidebar-image" src={site.sidebarImage} alt="" loading="lazy" />
+        <div class="sidebar-bio">
+          <h2>{site.title}</h2>
+          {site.sidebarLines.map((line) => <p>{line}</p>)}
+        </div>
       </div>
     </aside>
   </section>
