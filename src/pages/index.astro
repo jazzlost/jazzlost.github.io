@@ -16,6 +16,10 @@ const tags = getAllTags(posts);
         <ul class="tag-list sidebar-tags" aria-label="Tags">
           {tags.map((tag) => <li><a class="tag" href={getTagPath(tag.name)}>{tag.name}</a></li>)}
         </ul>
+        <nav class="sidebar-actions" aria-label="Explore blog">
+          <a href="/search/">Search</a>
+          <a href="/tags/">All tags</a>
+        </nav>
       </div>
       <div class="sidebar-profile">
         <img class="sidebar-image" src={site.sidebarImage} alt="" loading="lazy" />
