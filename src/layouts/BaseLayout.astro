@@ -26,7 +26,6 @@ const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/img/favicon.ico" />
-    <link rel="alternate" type="application/rss+xml" title={`${site.title} RSS`} href="/rss.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -42,7 +41,6 @@ const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
             <a href="/archive/">Archive</a>
             <a href="/tags/">Tags</a>
             <a href="/search/">Search</a>
-            <a href="/rss.xml">RSS</a>
           </div>
         </nav>
       </header>

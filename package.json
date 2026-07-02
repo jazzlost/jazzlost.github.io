@@ -10,7 +10,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/rss": "latest",
     "@astrojs/sitemap": "latest",
     "astro": "latest",
     "pagefind": "latest"
