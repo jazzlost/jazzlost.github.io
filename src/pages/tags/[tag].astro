@@ -1,0 +1,26 @@
+---
+import PostCard from '@/components/PostCard.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getAllTags, getPublishedPosts, slugifyTag } from '@/lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return getAllTags(posts).map((tag) => ({
+    params: { tag: slugifyTag(tag.name) },
+    props: { tag: tag.name, posts: posts.filter((post) => post.data.tags.includes(tag.name)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`Tag: ${tag}`} description={`jazzlost 标签 ${tag} 下的文章`}>
+  <section class="container section">
+    <p class="eyebrow">Tag</p>
+    <h1>{tag}</h1>
+    <p class="lead">{posts.length} 篇文章</p>
+    <div class="post-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+</BaseLayout>

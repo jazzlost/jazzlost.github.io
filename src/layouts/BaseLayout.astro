@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import { site } from '@/lib/site';
+
+type Props = {
+  title?: string;
+  description?: string;
+  image?: string;
+};
+
+const {
+  title = site.seoTitle,
+  description = site.description,
+  image = site.defaultHeaderImage,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/img/favicon.ico" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, site.url).toString()} />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <nav class="nav" aria-label="Primary navigation">
+          <a class="brand" href="/">{site.title}</a>
+          <div class="nav-links">
+            <a href="/archive/">Archive</a>
+            <a href="/tags/">Tags</a>
+            <a href="/search/">Search</a>
+          </div>
+        </nav>
+      </header>
+      <main data-pagefind-body>
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <div class="container">
+          <p>© {new Date().getFullYear()} {site.title}. Built with Astro and deployed on Cloudflare Pages.</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
