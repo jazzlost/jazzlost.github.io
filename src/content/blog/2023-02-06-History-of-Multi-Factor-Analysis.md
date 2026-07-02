@@ -9,7 +9,7 @@ tags:
   - "Finance"
   - "Quant"
   - "Multi-factor"
-slug: "histiroy-of-multi-factor-analysis"
+slug: "history-of-multi-factor-analysis"
 ---
 最近在看量化多因子基础方面的资料，直接从实操层面入手比较难理解量化的思维方式，本文整理了经典资产定价模型，帮助理解金融量化分析以及多因子的发展。
 
