@@ -6,15 +6,22 @@ type Props = {
   title?: string;
   description?: string;
   image?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImage?: string;
 };
 
 const {
   title = site.seoTitle,
   description = site.description,
   image = site.defaultHeaderImage,
+  heroTitle = site.title,
+  heroSubtitle = site.tagline,
+  heroImage = site.defaultHeaderImage,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
+const heroStyle = `--hero-image: url("${heroImage}")`;
 ---
 
 <!doctype html>
@@ -34,15 +41,18 @@ const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
   </head>
   <body>
     <div class="site-shell">
-      <header class="site-header">
-        <nav class="nav" aria-label="Primary navigation">
+      <header class="site-hero" style={heroStyle}>
+        <nav class="nav hero-nav" aria-label="Primary navigation">
           <a class="brand" href="/">{site.title}</a>
           <div class="nav-links">
+            <a href="/">Home</a>
             <a href="/archive/">Archive</a>
-            <a href="/tags/">Tags</a>
-            <a href="/search/">Search</a>
           </div>
         </nav>
+        <div class="hero-copy">
+          <h1>{heroTitle}</h1>
+          <p>{heroSubtitle}</p>
+        </div>
       </header>
       <main data-pagefind-body>
         <slot />
@@ -50,6 +60,11 @@ const pageTitle = title === site.seoTitle ? title : `${title} | ${site.title}`;
       <footer class="site-footer">
         <div class="container">
           <p>© {new Date().getFullYear()} {site.title}. Built with Astro and deployed on Cloudflare Pages.</p>
+          <nav class="footer-links" aria-label="Secondary navigation">
+            <a href="/archive/">Archive</a>
+            <a href="/tags/">Tags</a>
+            <a href="/search/">Search</a>
+          </nav>
         </div>
       </footer>
     </div>
