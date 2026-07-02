@@ -6,39 +6,34 @@ import { site } from '@/lib/site';
 
 const posts = await getPublishedPosts();
 const featuredPosts = posts.slice(0, 6);
-const tags = getAllTags(posts).slice(0, 14);
+const tags = getAllTags(posts);
 ---
 
 <BaseLayout>
-  <section class="container hero">
-    <div>
-      <p class="eyebrow">Research notes</p>
-      <h1>{site.title}</h1>
-      <p class="lead">{site.description}</p>
-      <ul class="topic-list" aria-label="Topics">
-        {site.topics.map((topic) => <li><span class="pill">{topic}</span></li>)}
-      </ul>
-    </div>
-    <aside class="panel">
-      <p class="eyebrow">Index</p>
-      <h2>{posts.length} 篇笔记</h2>
-      <p class="lead">从游戏音频开发到链上数据分析，保留旧文章的技术脉络，同时用更轻的框架继续维护。</p>
-      <ul class="tag-list" aria-label="Featured tags">
-        {tags.map((tag) => <li><a class="tag" href={getTagPath(tag.name)}>{tag.name} · {tag.count}</a></li>)}
-      </ul>
-    </aside>
-  </section>
-
-  <section class="container section">
-    <div class="section-header">
-      <div>
-        <p class="eyebrow">Latest</p>
-        <h2>最新文章</h2>
+  <section class="container home-layout">
+    <div class="home-main">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Latest</p>
+          <h2>最新文章</h2>
+        </div>
+        <a href="/archive/">View archive</a>
       </div>
-      <a href="/archive/">View archive</a>
+      <div class="post-grid">
+        {featuredPosts.map((post) => <PostCard post={post} />)}
+      </div>
     </div>
-    <div class="post-grid">
-      {featuredPosts.map((post) => <PostCard post={post} />)}
-    </div>
+
+    <aside class="sidebar" aria-label="Blog profile and tags">
+      <ul class="tag-list sidebar-tags" aria-label="Tags">
+        {tags.map((tag) => <li><a class="tag" href={getTagPath(tag.name)}>{tag.name}</a></li>)}
+      </ul>
+      <hr />
+      <img class="sidebar-image" src={site.sidebarImage} alt="" loading="lazy" />
+      <div class="sidebar-bio">
+        <h2>{site.title}</h2>
+        {site.sidebarLines.map((line) => <p>{line}</p>)}
+      </div>
+    </aside>
   </section>
 </BaseLayout>
